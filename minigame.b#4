@@ -2099,12 +2099,14 @@ design rules under a new name.</description>
 <contactref element="R10" pad="1"/>
 <wire x1="-53.02" y1="2.5701" x2="-51.75" y2="-5.08" width="0" layer="19" extent="1-1"/>
 </signal>
-<signal name="N$8">
+<signal name="VBAT">
 <contactref element="U1" pad="3"/>
 <contactref element="BAT1" pad="2"/>
 <contactref element="C5" pad="+"/>
-<wire x1="-51.12" y1="-0.0301" x2="82.55" y2="66.04" width="0" layer="19" extent="1-16"/>
-<wire x1="-47.13" y1="-16.51" x2="-51.12" y2="-0.0301" width="0" layer="19" extent="1-1"/>
+<contactref element="POWER" pad="2"/>
+<wire x1="90.17" y1="10.445" x2="82.55" y2="66.04" width="0" layer="19" extent="1-16"/>
+<wire x1="-47.13" y1="-16.51" x2="90.17" y2="10.445" width="0" layer="19" extent="1-1"/>
+<wire x1="-51.12" y1="-0.0301" x2="-47.13" y2="-16.51" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="CHARGE">
 <contactref element="U$1" pad="32"/>
@@ -2119,10 +2121,10 @@ design rules under a new name.</description>
 <wire x1="-36.83" y1="59.297" x2="-49.85" y2="-22.86" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$10">
-<contactref element="POWER" pad="3"/>
 <contactref element="U2" pad="1"/>
 <contactref element="U2" pad="3"/>
-<wire x1="-54.93" y1="-24.1601" x2="92.67" y2="10.445" width="0" layer="19" extent="1-1"/>
+<contactref element="POWER" pad="1"/>
+<wire x1="-54.93" y1="-24.1601" x2="87.67" y2="10.445" width="0" layer="19" extent="1-1"/>
 <wire x1="-56.83" y1="-24.1601" x2="-54.93" y2="-24.1601" width="0" layer="19" extent="1-1"/>
 </signal>
 </signals>

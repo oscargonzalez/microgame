@@ -1872,6 +1872,9 @@ design rules under a new name.</description>
 <element name="C4" library="SparkFun-Passives" package="1206" value="4.7uF" x="-50.8" y="-10.16"/>
 <element name="C5" library="SparkFun-Capacitors" package="PANASONIC_D" value="10uF" x="-49.53" y="-16.51"/>
 <element name="R11" library="rcl" package="M0805" value="470" x="-50.8" y="-22.86"/>
+<element name="U2" library="SparkFun-PowerIC" package="SOT23-5" value="MIC5219 3.3V" x="-55.88" y="-22.86">
+<attribute name="PROD_ID" value="VREG-09872" x="-55.88" y="-22.86" size="1.778" layer="27" display="off"/>
+</element>
 </elements>
 <signals>
 <signal name="N$1">
@@ -1912,6 +1915,7 @@ design rules under a new name.</description>
 <contactref element="R10" pad="2"/>
 <contactref element="C5" pad="-"/>
 <contactref element="C4" pad="1"/>
+<contactref element="U2" pad="2"/>
 <wire x1="52.79" y1="49.72" x2="69.85" y2="66.04" width="0" layer="19" extent="1-1"/>
 <wire x1="50.19" y1="51.52" x2="52.79" y2="49.72" width="0" layer="19" extent="1-1"/>
 <wire x1="43.79" y1="51.52" x2="50.19" y2="51.52" width="0" layer="19" extent="1-1"/>
@@ -1934,6 +1938,7 @@ design rules under a new name.</description>
 <wire x1="-49.85" y1="-5.08" x2="-52.07" y2="-0.0301" width="0" layer="19" extent="1-1"/>
 <wire x1="-52.2" y1="-10.16" x2="-49.85" y2="-5.08" width="0" layer="19" extent="1-1"/>
 <wire x1="-51.93" y1="-16.51" x2="-52.2" y2="-10.16" width="0" layer="19" extent="1-1"/>
+<wire x1="-55.88" y1="-24.1601" x2="-51.93" y2="-16.51" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="3.3V">
 <contactref element="U$1" pad="44"/>
@@ -2094,12 +2099,14 @@ design rules under a new name.</description>
 <contactref element="R10" pad="1"/>
 <wire x1="-53.02" y1="2.5701" x2="-51.75" y2="-5.08" width="0" layer="19" extent="1-1"/>
 </signal>
-<signal name="N$8">
+<signal name="VBAT">
 <contactref element="U1" pad="3"/>
 <contactref element="BAT1" pad="2"/>
 <contactref element="C5" pad="+"/>
-<wire x1="-51.12" y1="-0.0301" x2="82.55" y2="66.04" width="0" layer="19" extent="1-16"/>
-<wire x1="-47.13" y1="-16.51" x2="-51.12" y2="-0.0301" width="0" layer="19" extent="1-1"/>
+<contactref element="POWER" pad="2"/>
+<wire x1="90.17" y1="10.445" x2="82.55" y2="66.04" width="0" layer="19" extent="1-16"/>
+<wire x1="-47.13" y1="-16.51" x2="90.17" y2="10.445" width="0" layer="19" extent="1-1"/>
+<wire x1="-51.12" y1="-0.0301" x2="-47.13" y2="-16.51" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="CHARGE">
 <contactref element="U$1" pad="32"/>
@@ -2112,6 +2119,13 @@ design rules under a new name.</description>
 <contactref element="LED1" pad="C"/>
 <contactref element="R11" pad="2"/>
 <wire x1="-36.83" y1="59.297" x2="-49.85" y2="-22.86" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$10">
+<contactref element="POWER" pad="3"/>
+<contactref element="U2" pad="1"/>
+<contactref element="U2" pad="3"/>
+<wire x1="-54.93" y1="-24.1601" x2="92.67" y2="10.445" width="0" layer="19" extent="1-1"/>
+<wire x1="-56.83" y1="-24.1601" x2="-54.93" y2="-24.1601" width="0" layer="19" extent="1-1"/>
 </signal>
 </signals>
 </board>
