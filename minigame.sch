@@ -9104,8 +9104,8 @@ These are standard SMD and PTH capacitors. Normally 10uF, 47uF, and 100uF in ele
 <part name="J1" library="SparkFun-Connectors" deviceset="AVR_SPI_PRG_6" device="PTH"/>
 <part name="GND6" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="SUPPLY3" library="SparkFun-Aesthetics" deviceset="3.3V" device=""/>
-<part name="LED1" library="SparkFun-LED" deviceset="LED" device="0603"/>
-<part name="OLED128X64-938" library="SparkFun-Connectors" deviceset="M08" device="LONGPADS"/>
+<part name="LED1" library="SparkFun-LED" deviceset="LED" device="0603" value="RED"/>
+<part name="OLED128X64" library="SparkFun-Connectors" deviceset="M08" device="LONGPADS" value="ADAFRUIT-938"/>
 <part name="GND7" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="R4" library="rcl" deviceset="R-EU_" device="M0805" value="10k"/>
 <part name="R5" library="rcl" deviceset="R-EU_" device="M0805" value="10k"/>
@@ -9114,7 +9114,7 @@ These are standard SMD and PTH capacitors. Normally 10uF, 47uF, and 100uF in ele
 <part name="R8" library="rcl" deviceset="R-EU_" device="M0805" value="10k"/>
 <part name="R9" library="rcl" deviceset="R-EU_" device="M0805" value="10k"/>
 <part name="SUPPLY4" library="SparkFun-Aesthetics" deviceset="3.3V" device=""/>
-<part name="POWER" library="SparkFun-Electromechanical" deviceset="SWITCH-SPDT" device="SMD"/>
+<part name="POWER" library="SparkFun-Electromechanical" deviceset="SWITCH-SPDT" device="SMD" value="ON/OFF"/>
 <part name="S9" library="SparkFun-Electromechanical" deviceset="SWITCH-MOMENTARY-2" device="SMD-4" value="UP"/>
 <part name="S2" library="SparkFun-Electromechanical" deviceset="SWITCH-MOMENTARY-2" device="SMD-4" value="DOWN"/>
 <part name="S3" library="SparkFun-Electromechanical" deviceset="SWITCH-MOMENTARY-2" device="SMD-4" value="LEFT"/>
@@ -9168,7 +9168,7 @@ These are standard SMD and PTH capacitors. Normally 10uF, 47uF, and 100uF in ele
 <instance part="GND6" gate="1" x="-55.88" y="-22.86"/>
 <instance part="SUPPLY3" gate="G$1" x="-55.88" y="0"/>
 <instance part="LED1" gate="G$1" x="-33.02" y="-58.42" rot="R180"/>
-<instance part="OLED128X64-938" gate="G$1" x="106.68" y="68.58" rot="R180"/>
+<instance part="OLED128X64" gate="G$1" x="106.68" y="68.58" rot="R180"/>
 <instance part="GND7" gate="1" x="129.54" y="-43.18"/>
 <instance part="R4" gate="G$1" x="119.38" y="10.16" rot="R180"/>
 <instance part="R5" gate="G$1" x="119.38" y="2.54" rot="R180"/>
@@ -9184,7 +9184,7 @@ These are standard SMD and PTH capacitors. Normally 10uF, 47uF, and 100uF in ele
 <instance part="S4" gate="G$1" x="96.52" y="-12.7"/>
 <instance part="S5" gate="G$1" x="96.52" y="-25.4"/>
 <instance part="S6" gate="G$1" x="96.52" y="-33.02"/>
-<instance part="BAT1" gate="G$1" x="35.56" y="-81.28" rot="R90"/>
+<instance part="BAT1" gate="G$1" x="35.56" y="-81.28" rot="R270"/>
 <instance part="GND8" gate="1" x="35.56" y="-96.52"/>
 <instance part="U1" gate="G$1" x="-12.7" y="-71.12"/>
 <instance part="R10" gate="G$1" x="10.16" y="-83.82" rot="R270"/>
@@ -9314,11 +9314,6 @@ These are standard SMD and PTH capacitors. Normally 10uF, 47uF, and 100uF in ele
 <junction x="129.54" y="-33.02"/>
 </segment>
 <segment>
-<pinref part="BAT1" gate="G$1" pin="+"/>
-<pinref part="GND8" gate="1" pin="GND"/>
-<wire x1="35.56" y1="-86.36" x2="35.56" y2="-93.98" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="U1" gate="G$1" pin="VSS"/>
 <pinref part="GND9" gate="1" pin="GND"/>
 <wire x1="-2.54" y1="-73.66" x2="0" y2="-73.66" width="0.1524" layer="91"/>
@@ -9364,6 +9359,11 @@ These are standard SMD and PTH capacitors. Normally 10uF, 47uF, and 100uF in ele
 <junction x="129.54" y="-86.36"/>
 <junction x="142.24" y="-86.36"/>
 <junction x="152.4" y="-86.36"/>
+</segment>
+<segment>
+<pinref part="BAT1" gate="G$1" pin="-"/>
+<pinref part="GND8" gate="1" pin="GND"/>
+<wire x1="35.56" y1="-86.36" x2="35.56" y2="-93.98" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="3.3V" class="0">
@@ -9416,6 +9416,11 @@ These are standard SMD and PTH capacitors. Normally 10uF, 47uF, and 100uF in ele
 <pinref part="S5" gate="G$1" pin="1"/>
 <pinref part="S6" gate="G$1" pin="1"/>
 <pinref part="S9" gate="G$1" pin="1"/>
+<junction x="81.28" y="10.16"/>
+<junction x="81.28" y="2.54"/>
+<junction x="81.28" y="-5.08"/>
+<junction x="81.28" y="-12.7"/>
+<junction x="81.28" y="-25.4"/>
 </segment>
 <segment>
 <pinref part="U2" gate="G$1" pin="OUT"/>
@@ -9475,17 +9480,6 @@ These are standard SMD and PTH capacitors. Normally 10uF, 47uF, and 100uF in ele
 <junction x="-33.02" y="-68.58"/>
 <pinref part="LED1" gate="G$1" pin="A"/>
 <wire x1="-33.02" y1="-60.96" x2="-33.02" y2="-68.58" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$3" class="0">
-<segment>
-<pinref part="R1" gate="G$1" pin="1"/>
-<pinref part="S1" gate="G$1" pin="2"/>
-<wire x1="-30.48" y1="81.28" x2="-30.48" y2="76.2" width="0.1524" layer="91"/>
-<pinref part="U$1" gate="G$1" pin="!RESET"/>
-<wire x1="-30.48" y1="76.2" x2="-30.48" y2="71.12" width="0.1524" layer="91"/>
-<wire x1="-2.54" y1="76.2" x2="-30.48" y2="76.2" width="0.1524" layer="91"/>
-<junction x="-30.48" y="76.2"/>
 </segment>
 </net>
 <net name="D-" class="0">
@@ -9550,6 +9544,16 @@ These are standard SMD and PTH capacitors. Normally 10uF, 47uF, and 100uF in ele
 <wire x1="-78.74" y1="-12.7" x2="-91.44" y2="-12.7" width="0.1524" layer="91"/>
 <label x="-91.44" y="-12.7" size="1.778" layer="95"/>
 </segment>
+<segment>
+<pinref part="R1" gate="G$1" pin="1"/>
+<pinref part="S1" gate="G$1" pin="2"/>
+<wire x1="-30.48" y1="81.28" x2="-30.48" y2="76.2" width="0.1524" layer="91"/>
+<pinref part="U$1" gate="G$1" pin="!RESET"/>
+<wire x1="-30.48" y1="76.2" x2="-30.48" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="-2.54" y1="76.2" x2="-30.48" y2="76.2" width="0.1524" layer="91"/>
+<junction x="-30.48" y="76.2"/>
+<label x="-22.86" y="76.2" size="1.778" layer="95"/>
+</segment>
 </net>
 <net name="MOSI" class="0">
 <segment>
@@ -9565,56 +9569,56 @@ These are standard SMD and PTH capacitors. Normally 10uF, 47uF, and 100uF in ele
 </net>
 <net name="OLED_DATA" class="0">
 <segment>
-<pinref part="OLED128X64-938" gate="G$1" pin="1"/>
+<pinref part="OLED128X64" gate="G$1" pin="1"/>
 <wire x1="101.6" y1="76.2" x2="88.9" y2="76.2" width="0.1524" layer="91"/>
 <label x="88.9" y="76.2" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="OLED_CLK" class="0">
 <segment>
-<pinref part="OLED128X64-938" gate="G$1" pin="2"/>
+<pinref part="OLED128X64" gate="G$1" pin="2"/>
 <wire x1="101.6" y1="73.66" x2="88.9" y2="73.66" width="0.1524" layer="91"/>
 <label x="88.9" y="73.66" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="OLED_DC" class="0">
 <segment>
-<pinref part="OLED128X64-938" gate="G$1" pin="3"/>
+<pinref part="OLED128X64" gate="G$1" pin="3"/>
 <wire x1="101.6" y1="71.12" x2="88.9" y2="71.12" width="0.1524" layer="91"/>
 <label x="88.9" y="71.12" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="OLED_RST" class="0">
 <segment>
-<pinref part="OLED128X64-938" gate="G$1" pin="4"/>
+<pinref part="OLED128X64" gate="G$1" pin="4"/>
 <wire x1="101.6" y1="68.58" x2="88.9" y2="68.58" width="0.1524" layer="91"/>
 <label x="88.9" y="68.58" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="OLED_CS" class="0">
 <segment>
-<pinref part="OLED128X64-938" gate="G$1" pin="5"/>
+<pinref part="OLED128X64" gate="G$1" pin="5"/>
 <wire x1="101.6" y1="66.04" x2="88.9" y2="66.04" width="0.1524" layer="91"/>
 <label x="88.9" y="66.04" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="OLED_3V3" class="0">
 <segment>
-<pinref part="OLED128X64-938" gate="G$1" pin="6"/>
+<pinref part="OLED128X64" gate="G$1" pin="6"/>
 <wire x1="101.6" y1="63.5" x2="88.9" y2="63.5" width="0.1524" layer="91"/>
 <label x="88.9" y="63.5" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="OLED_VIN" class="0">
 <segment>
-<pinref part="OLED128X64-938" gate="G$1" pin="7"/>
+<pinref part="OLED128X64" gate="G$1" pin="7"/>
 <wire x1="101.6" y1="60.96" x2="88.9" y2="60.96" width="0.1524" layer="91"/>
 <label x="88.9" y="60.96" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="OLED_GND" class="0">
 <segment>
-<pinref part="OLED128X64-938" gate="G$1" pin="8"/>
+<pinref part="OLED128X64" gate="G$1" pin="8"/>
 <wire x1="101.6" y1="58.42" x2="88.9" y2="58.42" width="0.1524" layer="91"/>
 <label x="88.9" y="58.42" size="1.778" layer="95"/>
 </segment>
@@ -9705,26 +9709,6 @@ These are standard SMD and PTH capacitors. Normally 10uF, 47uF, and 100uF in ele
 <wire x1="10.16" y1="-71.12" x2="10.16" y2="-78.74" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="VBAT" class="0">
-<segment>
-<pinref part="U1" gate="G$1" pin="VBAT"/>
-<pinref part="BAT1" gate="G$1" pin="-"/>
-<wire x1="-2.54" y1="-68.58" x2="20.32" y2="-68.58" width="0.1524" layer="91"/>
-<wire x1="20.32" y1="-68.58" x2="35.56" y2="-68.58" width="0.1524" layer="91"/>
-<wire x1="35.56" y1="-68.58" x2="35.56" y2="-76.2" width="0.1524" layer="91"/>
-<pinref part="C5" gate="G$1" pin="+"/>
-<wire x1="20.32" y1="-78.74" x2="20.32" y2="-68.58" width="0.1524" layer="91"/>
-<junction x="20.32" y="-68.58"/>
-<wire x1="35.56" y1="-68.58" x2="48.26" y2="-68.58" width="0.1524" layer="91"/>
-<label x="43.18" y="-68.58" size="1.778" layer="95"/>
-<junction x="35.56" y="-68.58"/>
-</segment>
-<segment>
-<pinref part="POWER" gate="1" pin="P"/>
-<wire x1="73.66" y1="-66.04" x2="66.04" y2="-66.04" width="0.1524" layer="91"/>
-<label x="66.04" y="-66.04" size="1.778" layer="95"/>
-</segment>
-</net>
 <net name="CHARGE" class="0">
 <segment>
 <pinref part="U$1" gate="G$1" pin="PC7"/>
@@ -9770,9 +9754,32 @@ These are standard SMD and PTH capacitors. Normally 10uF, 47uF, and 100uF in ele
 <wire x1="121.92" y1="-78.74" x2="121.92" y2="-86.36" width="0.1524" layer="91"/>
 </segment>
 </net>
+<net name="VBAT" class="0">
+<segment>
+<pinref part="U1" gate="G$1" pin="VBAT"/>
+<wire x1="-2.54" y1="-68.58" x2="20.32" y2="-68.58" width="0.1524" layer="91"/>
+<wire x1="20.32" y1="-68.58" x2="35.56" y2="-68.58" width="0.1524" layer="91"/>
+<pinref part="C5" gate="G$1" pin="+"/>
+<wire x1="20.32" y1="-78.74" x2="20.32" y2="-68.58" width="0.1524" layer="91"/>
+<junction x="20.32" y="-68.58"/>
+<pinref part="POWER" gate="1" pin="P"/>
+<wire x1="73.66" y1="-66.04" x2="35.56" y2="-66.04" width="0.1524" layer="91"/>
+<wire x1="35.56" y1="-66.04" x2="35.56" y2="-68.58" width="0.1524" layer="91"/>
+<pinref part="BAT1" gate="G$1" pin="+"/>
+<wire x1="35.56" y1="-76.2" x2="35.56" y2="-68.58" width="0.1524" layer="91"/>
+<junction x="35.56" y="-68.58"/>
+<label x="40.64" y="-66.04" size="1.778" layer="95"/>
+</segment>
+</net>
 </nets>
 </sheet>
 </sheets>
+<errors>
+<approved hash="104,1,35.56,-86.36,BAT1,-,GND,,,"/>
+<approved hash="104,1,35.56,-76.2,BAT1,+,VBAT,,,"/>
+<approved hash="104,1,-22.86,-68.58,U1,VIN,VBUS,,,"/>
+<approved hash="104,1,-2.54,-73.66,U1,VSS,GND,,,"/>
+</errors>
 </schematic>
 </drawing>
 </eagle>
