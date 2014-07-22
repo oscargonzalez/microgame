@@ -9699,6 +9699,11 @@ MMBT5088LT1G - TRANS-11160 (SOT-23, 50 mA 30V)&lt;br&gt;
 <part name="R12" library="rcl" deviceset="R-EU_" device="M0805" value="180"/>
 <part name="SUPPLY7" library="SparkFun-Aesthetics" deviceset="3.3V" device=""/>
 <part name="COPY+2" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
+<part name="LED2" library="SparkFun-LED" deviceset="LED" device="0603" value="YELLOW"/>
+<part name="LED3" library="SparkFun-LED" deviceset="LED" device="0603" value="BLUE"/>
+<part name="R13" library="rcl" deviceset="R-EU_" device="M0805" value="330"/>
+<part name="R14" library="rcl" deviceset="R-EU_" device="M0805" value="330"/>
+<part name="GND1" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -9769,6 +9774,11 @@ MMBT5088LT1G - TRANS-11160 (SOT-23, 50 mA 30V)&lt;br&gt;
 <instance part="R12" gate="G$1" x="152.4" y="30.48" rot="R180"/>
 <instance part="SUPPLY7" gate="G$1" x="167.64" y="66.04"/>
 <instance part="COPY+2" gate="1" x="167.64" y="17.78"/>
+<instance part="LED2" gate="G$1" x="40.64" y="-20.32"/>
+<instance part="LED3" gate="G$1" x="53.34" y="-20.32"/>
+<instance part="R13" gate="G$1" x="40.64" y="-10.16" rot="R270"/>
+<instance part="R14" gate="G$1" x="53.34" y="-10.16" rot="R270"/>
+<instance part="GND1" gate="1" x="40.64" y="-40.64"/>
 </instances>
 <busses>
 </busses>
@@ -9940,6 +9950,16 @@ MMBT5088LT1G - TRANS-11160 (SOT-23, 50 mA 30V)&lt;br&gt;
 <pinref part="COPY+2" gate="1" pin="GND"/>
 <pinref part="Q1" gate="G$1" pin="E"/>
 <wire x1="167.64" y1="20.32" x2="167.64" y2="25.4" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="LED2" gate="G$1" pin="C"/>
+<wire x1="40.64" y1="-25.4" x2="40.64" y2="-33.02" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="-33.02" x2="53.34" y2="-33.02" width="0.1524" layer="91"/>
+<pinref part="LED3" gate="G$1" pin="C"/>
+<wire x1="53.34" y1="-33.02" x2="53.34" y2="-25.4" width="0.1524" layer="91"/>
+<pinref part="GND1" gate="1" pin="GND"/>
+<wire x1="40.64" y1="-38.1" x2="40.64" y2="-33.02" width="0.1524" layer="91"/>
+<junction x="40.64" y="-33.02"/>
 </segment>
 </net>
 <net name="3.3V" class="0">
@@ -10395,6 +10415,36 @@ MMBT5088LT1G - TRANS-11160 (SOT-23, 50 mA 30V)&lt;br&gt;
 <pinref part="R12" gate="G$1" pin="2"/>
 <wire x1="147.32" y1="30.48" x2="137.16" y2="30.48" width="0.1524" layer="91"/>
 <label x="137.16" y="30.48" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="N$12" class="0">
+<segment>
+<pinref part="R13" gate="G$1" pin="2"/>
+<pinref part="LED2" gate="G$1" pin="A"/>
+<wire x1="40.64" y1="-15.24" x2="40.64" y2="-17.78" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$13" class="0">
+<segment>
+<pinref part="R14" gate="G$1" pin="2"/>
+<pinref part="LED3" gate="G$1" pin="A"/>
+<wire x1="53.34" y1="-15.24" x2="53.34" y2="-17.78" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$15" class="0">
+<segment>
+<pinref part="U$1" gate="G$1" pin="PD5"/>
+<pinref part="R13" gate="G$1" pin="1"/>
+<wire x1="33.02" y1="5.08" x2="40.64" y2="5.08" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="5.08" x2="40.64" y2="-5.08" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$16" class="0">
+<segment>
+<pinref part="U$1" gate="G$1" pin="PB0(SS)"/>
+<pinref part="R14" gate="G$1" pin="1"/>
+<wire x1="33.02" y1="17.78" x2="53.34" y2="17.78" width="0.1524" layer="91"/>
+<wire x1="53.34" y1="17.78" x2="53.34" y2="-5.08" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>

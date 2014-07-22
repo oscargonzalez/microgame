@@ -1919,6 +1919,10 @@ design rules under a new name.</description>
 <attribute name="PROD_ID" value="TRANS-08049" x="85.09" y="22.86" size="1.778" layer="27" display="off"/>
 </element>
 <element name="R12" library="rcl" package="M0805" value="180" x="90.17" y="22.86"/>
+<element name="LED2" library="SparkFun-LED" package="LED-0603" value="YELLOW" x="64.77" y="12.7"/>
+<element name="LED3" library="SparkFun-LED" package="LED-0603" value="BLUE" x="67.31" y="12.7"/>
+<element name="R13" library="rcl" package="M0805" value="330" x="71.12" y="12.7" rot="R90"/>
+<element name="R14" library="rcl" package="M0805" value="330" x="74.93" y="12.7" rot="R90"/>
 </elements>
 <signals>
 <signal name="N$1">
@@ -1966,6 +1970,8 @@ design rules under a new name.</description>
 <contactref element="BAT1" pad="2"/>
 <contactref element="OLED128X64" pad="8"/>
 <contactref element="Q1" pad="2"/>
+<contactref element="LED2" pad="C"/>
+<contactref element="LED3" pad="C"/>
 <wire x1="55.88" y1="68.58" x2="82.55" y2="66.04" width="0" layer="19" extent="16-16"/>
 <wire x1="50.19" y1="51.52" x2="55.88" y2="68.58" width="0" layer="19" extent="1-1"/>
 <wire x1="52.79" y1="49.72" x2="50.19" y2="51.52" width="0" layer="19" extent="1-1"/>
@@ -1988,13 +1994,15 @@ design rules under a new name.</description>
 <wire x1="3.95" y1="16.51" x2="6.35" y2="22.8299" width="0" layer="19" extent="1-1"/>
 <wire x1="6.03" y1="8.89" x2="3.95" y2="16.51" width="0" layer="19" extent="1-1"/>
 <wire x1="3.68" y1="30.48" x2="6.35" y2="22.8299" width="0" layer="19" extent="1-1"/>
+<wire x1="64.77" y1="13.577" x2="6.03" y2="8.89" width="0" layer="19" extent="1-1"/>
+<wire x1="67.31" y1="13.577" x2="64.77" y2="13.577" width="0" layer="19" extent="1-1"/>
 <wire x1="51.13" y1="7.58" x2="29.08" y2="10.16" width="0" layer="19" extent="1-1"/>
-<wire x1="86.04" y1="21.86" x2="6.03" y2="8.89" width="0" layer="19" extent="1-1"/>
 <wire x1="27.94" y1="74.93" x2="43.79" y2="51.52" width="0" layer="19" extent="1-1"/>
 <wire x1="15.11" y1="66.04" x2="27.94" y2="74.93" width="0" layer="19" extent="1-1"/>
 <wire x1="15.11" y1="62.23" x2="15.11" y2="66.04" width="0" layer="19" extent="1-1"/>
 <wire x1="15.11" y1="58.42" x2="15.11" y2="62.23" width="0" layer="19" extent="1-1"/>
 <wire x1="6.096" y1="76.835" x2="15.11" y2="66.04" width="0" layer="19" extent="1-1"/>
+<wire x1="86.04" y1="21.86" x2="51.13" y2="7.58" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="3.3V">
 <contactref element="U$1" pad="44"/>
@@ -2217,6 +2225,26 @@ design rules under a new name.</description>
 <contactref element="U$1" pad="18"/>
 <contactref element="R12" pad="2"/>
 <wire x1="91.12" y1="22.86" x2="47.79" y2="39.92" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$12">
+<contactref element="R13" pad="2"/>
+<contactref element="LED2" pad="A"/>
+<wire x1="64.77" y1="11.823" x2="71.12" y2="13.65" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$13">
+<contactref element="R14" pad="2"/>
+<contactref element="LED3" pad="A"/>
+<wire x1="67.31" y1="11.823" x2="74.93" y2="13.65" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$15">
+<contactref element="U$1" pad="22"/>
+<contactref element="R13" pad="1"/>
+<wire x1="71.12" y1="11.75" x2="50.99" y2="39.92" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$16">
+<contactref element="U$1" pad="8"/>
+<contactref element="R14" pad="1"/>
+<wire x1="74.93" y1="11.75" x2="41.19" y2="44.12" width="0" layer="19" extent="1-1"/>
 </signal>
 </signals>
 </board>
