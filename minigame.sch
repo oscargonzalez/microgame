@@ -10235,13 +10235,6 @@ MMBT5088LT1G - TRANS-11160 (SOT-23, 50 mA 30V)&lt;br&gt;
 <label x="35.56" y="22.86" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="OLED_3V3" class="0">
-<segment>
-<pinref part="OLED128X64" gate="G$1" pin="6"/>
-<wire x1="101.6" y1="63.5" x2="88.9" y2="63.5" width="0.1524" layer="91"/>
-<label x="88.9" y="63.5" size="1.778" layer="95"/>
-</segment>
-</net>
 <net name="UP" class="0">
 <segment>
 <pinref part="R4" gate="G$1" pin="2"/>

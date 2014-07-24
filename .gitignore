@@ -1,3 +1,5 @@
 # Avoid Eagle temp files
 *.s#*
 *.b#*
+*.job
+*.pro
