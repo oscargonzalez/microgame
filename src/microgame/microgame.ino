@@ -173,7 +173,7 @@ Starfield::Starfield()
   counter=0;
   for (char i=0; i<10 ; i++)
   {
-      stars[i].y=0;
+      stars[i].y = random(0, 64);
       stars[i].x = random(0, 128);
   }
 }
@@ -202,24 +202,18 @@ void loop() {
   
   char x=0;
  
-   for (int i=0 ; i<128-11 ; i+=2)
-   {
      //nave.moveRight();
-     nave.update();
-     
+     nave.update();    
      stars.update();
-     
+/*     
     display.setTextSize(1);
     display.setTextColor(WHITE);
     display.setCursor(0,0);
     display.println("Hello, world!");
     display.setTextColor(BLACK, WHITE); // 'inverted' text
     display.print("SCORE:");     
-     
+*/     
      display.display();    
-   }
-   
-   
   
 }
 
