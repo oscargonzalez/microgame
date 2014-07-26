@@ -18,25 +18,7 @@ Adafruit_SSD1306 display(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 Adafruit_SSD1306 display(OLED_DC, OLED_RESET, OLED_CS);
 */
 
-#define LOGO16_GLCD_HEIGHT 16 
-#define LOGO16_GLCD_WIDTH  16 
-static const unsigned char PROGMEM logo16_glcd_bmp[] =
-{ B00000000, B11000000,
-  B00000001, B11000000,
-  B00000001, B11000000,
-  B00000011, B11100000,
-  B11110011, B11100000,
-  B11111110, B11111000,
-  B01111110, B11111111,
-  B00110011, B10011111,
-  B00011111, B11111100,
-  B00001101, B01110000,
-  B00011011, B10100000,
-  B00111111, B11100000,
-  B00111111, B11110000,
-  B01111100, B11110000,
-  B01110000, B01110000,
-  B00000000, B00110000 };
+#define MAX_STARS 10
   
 // Ship: 11x11
 const unsigned char PROGMEM ship [] = {
@@ -99,12 +81,17 @@ void setup()   {
   display.setTextColor(WHITE);
   display.setCursor(10,0);
   display.clearDisplay();
-  display.println("Ninja!");
+  display.println("BattleShip");
   display.display();  
   
   display.clearDisplay();
 
 }
+
+struct tPos {
+   char x;
+   char y; 
+};
 
 /*
   Ship class definition
@@ -118,6 +105,8 @@ class Battleship
     void moveLeft();
     void moveUp();
     void moveDown();
+    void setPosition(int x, int y);
+    tPos getPosition();
     
   private:
     int _lastx;
@@ -140,6 +129,8 @@ void Battleship::moveRight()   { _lastx=_x; _x += _velocity; }
 void Battleship::moveLeft()    { _lastx=_x; _x -= _velocity; }
 void Battleship::moveUp()      { _lasty=_y; _y -= _velocity; }
 void Battleship::moveDown()    { _lasty=_y; _y += _velocity; }
+tPos Battleship::getPosition() { tPos p; p.x = _x; p.y = _y; return p; }
+void Battleship::setPosition(int x, int y) { _lastx=_x; _lasty=_y; _x=x; _y=y; }
 
 void Battleship::update()
 {
@@ -151,11 +142,6 @@ void Battleship::update()
   display.drawBitmap(_x, _y,  enemy1, 13, 9, 1);  
 }
 
-struct tPos {
-   char x;
-   char y; 
-};
-
 class Starfield 
 {
   public:
@@ -163,15 +149,13 @@ class Starfield
     void update();
     
  private:
-   tPos stars[10];
-   char counter;   
+   tPos stars[MAX_STARS];
 };
 
 Starfield::Starfield()
 {
   randomSeed(analogRead(0));
-  counter=0;
-  for (char i=0; i<10 ; i++)
+  for (char i=0; i<MAX_STARS ; i++)
   {
       stars[i].y = random(0, 64);
       stars[i].x = random(0, 128);
@@ -181,39 +165,44 @@ Starfield::Starfield()
 void Starfield::update()
 {
 
-    display.drawPixel(stars[counter].x, stars[counter].y, BLACK);
-    stars[counter].y+=4;    
-    display.drawPixel(stars[counter].x, stars[counter].y, WHITE);
-    
-    if (stars[counter].y > 64) { 
-      stars[counter].y=0;
-      stars[counter].x = random(0, 128);      
-    }
-    
-    counter++;
-    if (counter > 10) counter=0;
+    for (int i=0 ; i<MAX_STARS ; i++)
+    {
+      display.drawPixel(stars[i].x, stars[i].y, BLACK);
+      stars[i].y+=2;    
+      display.drawPixel(stars[i].x, stars[i].y, WHITE);
       
+      if (stars[i].y > 64) { 
+        stars[i].y=0;
+        stars[i].x = random(0, 128);      
+      }
+    }
+     
 }
 
 Battleship nave;
 Starfield stars;
 
+boolean flip=false;
+
+float inc=0;
 void loop() {
   
   char x=0;
- 
-     //nave.moveRight();
+  
+  nave.setPosition(64+sin(inc)*35, 54);
+  
+  inc+=0.03;
+      
      nave.update();    
      stars.update();
-/*     
-    display.setTextSize(1);
+     
+    display.setTextSize(0);
     display.setTextColor(WHITE);
     display.setCursor(0,0);
-    display.println("Hello, world!");
     display.setTextColor(BLACK, WHITE); // 'inverted' text
-    display.print("SCORE:");     
-*/     
-     display.display();    
+    display.println("SCORE: 0");    
+     
+    display.display();    
   
 }
 
