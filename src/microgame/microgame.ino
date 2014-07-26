@@ -134,12 +134,13 @@ void Battleship::setPosition(int x, int y) { _lastx=_x; _lasty=_y; _x=x; _y=y; }
 
 void Battleship::update()
 {
-  /*
+  
   display.drawBitmap(_lastx, _lasty,  ship, 11, 11, 0);
   display.drawBitmap(_x, _y,  ship, 11, 11, 1);
-  */
+  /*
   display.drawBitmap(_lastx, _lasty,  enemy1, 13, 9, 0);
   display.drawBitmap(_x, _y,  enemy1, 13, 9, 1);  
+  */
 }
 
 class Starfield 
@@ -168,7 +169,7 @@ void Starfield::update()
     for (int i=0 ; i<MAX_STARS ; i++)
     {
       display.drawPixel(stars[i].x, stars[i].y, BLACK);
-      stars[i].y+=2;    
+      stars[i].y+=1;    
       display.drawPixel(stars[i].x, stars[i].y, WHITE);
       
       if (stars[i].y > 64) { 
