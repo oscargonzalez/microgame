@@ -182,14 +182,52 @@ void Battleship::update()
   ======================================================================*/
 class Enemy {
   public:
+    Enemy();
+    void update();
+    tPos getPosition();
+    void create();
+    void destroy();
     
   private:
-    int type;
+    boolean islive; // Enemy is alive!
+    int type;        // Type of enemy
     int _lastx;
     int _lasty;
     int _x;
-    int _y;      
+    int _y;    
+    unsigned long last_millis;  
 };
+
+Enemy::Enemy()
+{
+    islive=false;
+    type=0;
+    _lastx=0;
+    _lasty=0;
+    _x=0;
+    _y=0;    
+    last_millis=0;
+}
+
+void Enemy::update()
+{
+  
+}
+
+tPos Enemy::getPosition()
+{
+  
+}
+
+void Enemy::create()
+{
+  
+}
+
+void Enemy::destroy()
+{
+  
+}
 
 /*======================================================================
   Starfield class definition
@@ -234,6 +272,7 @@ void Starfield::update()
 
 Battleship nave;
 Starfield stars;
+Enemy enemies[MAX_ENEMIES];
 
 float inc=0;
 unsigned long last_fire=millis();
