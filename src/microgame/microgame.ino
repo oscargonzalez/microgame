@@ -18,17 +18,22 @@ Adafruit_SSD1306 display(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 Adafruit_SSD1306 display(OLED_DC, OLED_RESET, OLED_CS);
 */
 
-#define MAX_STARS 10
+#define MAX_STARS          10 // Starfield config. The more, the poor...
+#define SCOREBOARD_HEIGHT  8
+#define MAX_FIRES          3 // Max player fires at the same time
+#define BATTESHIP_WIDTH    10
+#define BATTESHIP_HEIGHT   7
+#define BATTESHIP_FIRE_WIDTH    3  //Width of the shot
   
-// Ship: 11x11
-const unsigned char PROGMEM ship [] = {
-  4, 0, 4, 0, 4, 0, 4, 0, 46, 128, 46, 128, 59, 128, 145, 32, 245, 224, 191, 160, 132, 32
-};    
+// Ship: 10x7
+const unsigned char PROGMEM ship [] = { 112, 0, 243, 0, 121, 128, 63, 192, 121, 128, 243, 0, 112, 0 };    
 
-// enemy 1: 13x9
-const unsigned char PROGMEM enemy1 [] = {
-  48, 96, 103, 48, 202, 152, 157, 200, 250, 248, 143, 136, 199, 8, 98, 24, 48, 96
-};    
+// enemys: 5x5
+const unsigned char PROGMEM enemy1 [] = { 32, 168, 248, 112, 136 }; 
+const unsigned char PROGMEM enemy2 [] = { 24, 48, 248, 48, 24 };    
+const unsigned char PROGMEM enemy3 [] = { 216, 112, 80, 112, 168 };    
+const unsigned char PROGMEM enemy4 [] = { 136, 168, 248, 112, 216 };    
+const unsigned char PROGMEM enemy5 [] = { 80, 248, 248, 112, 168 };    
 
 void setup()   {                
   Serial.begin(9600);
@@ -105,6 +110,7 @@ class Battleship
     void moveLeft();
     void moveUp();
     void moveDown();
+    void Fire();
     void setPosition(int x, int y);
     tPos getPosition();
     
@@ -114,6 +120,8 @@ class Battleship
     int _x;
     int _y;   
     int _velocity;   
+    char fire_count;
+    tPos fires[MAX_FIRES];
 };
 
 Battleship::Battleship()
@@ -123,6 +131,7 @@ Battleship::Battleship()
    _lastx=0;
    _lasty=0;
    _velocity=2;
+   fire_count=0;
 }
 
 void Battleship::moveRight()   { _lastx=_x; _x += _velocity; }
@@ -131,16 +140,34 @@ void Battleship::moveUp()      { _lasty=_y; _y -= _velocity; }
 void Battleship::moveDown()    { _lasty=_y; _y += _velocity; }
 tPos Battleship::getPosition() { tPos p; p.x = _x; p.y = _y; return p; }
 void Battleship::setPosition(int x, int y) { _lastx=_x; _lasty=_y; _x=x; _y=y; }
+void Battleship::Fire()
+{
+  if (fire_count < MAX_FIRES)
+  {
+     BATTESHIP_HEIGHT 
+     fires[fire_count].x = BATTESHIP_WIDTH;
+     fires[fire_count].y = BATTESHIP_HEIGHT/2; // Divide in realtime in bad ;)
+     fire_count++;
+  }
+}
 
 void Battleship::update()
 {
   
-  display.drawBitmap(_lastx, _lasty,  ship, 11, 11, 0);
-  display.drawBitmap(_x, _y,  ship, 11, 11, 1);
-  /*
-  display.drawBitmap(_lastx, _lasty,  enemy1, 13, 9, 0);
-  display.drawBitmap(_x, _y,  enemy1, 13, 9, 1);  
-  */
+  int i;
+  
+  // Update position
+  display.drawBitmap(_lastx, _lasty,  ship, 10, 7, 0);
+  display.drawBitmap(_x, _y,  ship, 10, 7, 1);
+
+  // Update fire
+  if (fire_count > 0)
+  {
+    for (i=0 ; i<fire_count ; i++)
+    {
+      //BATTESHIP_FIRE_WIDTH      
+    }
+  }
 }
 
 class Starfield 
@@ -158,8 +185,8 @@ Starfield::Starfield()
   randomSeed(analogRead(0));
   for (char i=0; i<MAX_STARS ; i++)
   {
-      stars[i].y = random(0, 64);
-      stars[i].x = random(0, 128);
+      stars[i].x = random(0, 127);
+      stars[i].y = random(SCOREBOARD_HEIGHT, 63);      
   }
 }
 
@@ -169,12 +196,13 @@ void Starfield::update()
     for (int i=0 ; i<MAX_STARS ; i++)
     {
       display.drawPixel(stars[i].x, stars[i].y, BLACK);
-      stars[i].y+=1;    
+      stars[i].x-=1;    
       display.drawPixel(stars[i].x, stars[i].y, WHITE);
       
-      if (stars[i].y > 64) { 
-        stars[i].y=0;
-        stars[i].x = random(0, 128);      
+      if (stars[i].x <= 1) { 
+        display.drawPixel(stars[i].x, stars[i].y, BLACK);
+        stars[i].x = 127;      
+        stars[i].y = random(SCOREBOARD_HEIGHT, 63);      
       }
     }
      
@@ -183,16 +211,14 @@ void Starfield::update()
 Battleship nave;
 Starfield stars;
 
-boolean flip=false;
-
 float inc=0;
 void loop() {
   
   char x=0;
   
-  nave.setPosition(64+sin(inc)*35, 54);
+  nave.setPosition(0, 32+sin(inc)*28);
   
-  inc+=0.03;
+  inc+=0.06;
       
      nave.update();    
      stars.update();
@@ -202,6 +228,12 @@ void loop() {
     display.setCursor(0,0);
     display.setTextColor(BLACK, WHITE); // 'inverted' text
     display.println("SCORE: 0");    
+    
+    display.drawBitmap(64, 5, enemy1, 5, 5, 1);
+    display.drawBitmap(64, 15, enemy2, 5, 5, 1);
+    display.drawBitmap(64, 25, enemy3, 5, 5, 1);
+    display.drawBitmap(64, 35, enemy4, 5, 5, 1);
+    display.drawBitmap(64, 45, enemy5, 5, 5, 1);
      
     display.display();    
   
