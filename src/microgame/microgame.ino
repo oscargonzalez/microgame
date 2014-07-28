@@ -108,9 +108,10 @@ class Battleship
     void moveDown();
     void Fire();
     void setPosition(int x, int y);
-    tPos getPosition();
+    tPos getTpos(int x, int y);
+    boolean isInsideRect(tPos point, tPos rectpos, int width, int height);
     
-  private:
+    // Internals (also public...)
     int _lastx;
     int _lasty;
     int _x;
@@ -137,7 +138,6 @@ void Battleship::moveRight()   { _lastx=_x; _x += _velocity; }
 void Battleship::moveLeft()    { _lastx=_x; _x -= _velocity; }
 void Battleship::moveUp()      { _lasty=_y; _y -= _velocity; }
 void Battleship::moveDown()    { _lasty=_y; _y += _velocity; }
-tPos Battleship::getPosition() { tPos p; p.x = _x; p.y = _y; return p; }
 void Battleship::setPosition(int x, int y) { _lastx=_x; _lasty=_y; _x=x; _y=y; }
 void Battleship::Fire()
 {
@@ -148,7 +148,7 @@ void Battleship::Fire()
        if (fires[i].x == 0)
        {
          fires[i].x = _x + BATTESHIP_WIDTH;
-         fires[i].y = _y + (BATTESHIP_HEIGHT/2); // Divide in realtime in bad ;)
+         fires[i].y = _y + (BATTESHIP_HEIGHT/2); // Divide in realtime is bad ;)
          fire_count++;
          break;
        }
@@ -187,6 +187,28 @@ void Battleship::update()
   }
 }
 
+// Helper return tPos from coordinates
+tPos Battleship::getTpos(int x, int y)
+{
+  tPos p;
+  p.x = x; p.y= y;
+  return p;
+}
+
+// Helper:
+// Return TRUE if the point is inside a rectagle by given by width and height
+boolean Battleship::isInsideRect(tPos point, tPos rectpos, int width, int height)
+{
+  if ( (point.x >= rectpos.x) && 
+       (point.y >= rectpos.y) &&
+       (point.x <  (rectpos.x+width)) &&
+       (point.y <  (rectpos.y+height)) )
+       {
+        return true; 
+       }
+       else { return false; }
+}
+
 /*======================================================================
   Enemy class definition
   ======================================================================*/
@@ -198,7 +220,7 @@ class Enemy {
     void create();
     void destroy();
     
-  private:
+    // Internals (also public...)
     boolean islive; // Enemy is alive!
     int _type;        // Type of enemy
     int _lastx;
@@ -208,6 +230,7 @@ class Enemy {
     int _y;    
     unsigned long last_millis;  
     unsigned long fire_delay_ms;  
+    const unsigned char *sprite;
 };
 
 Enemy::Enemy()
@@ -226,15 +249,21 @@ Enemy::Enemy()
 
 void Enemy::create()
 {
-    islive=true;
-    _type= random(1, 5);    
-    position.x = 100;
-    position.y = random(10, 50);
-    _lastx=_x;
-    _lasty=_y;
+    if (total_enemies < MAX_ENEMIES)
+    {
     
-    last_millis = millis();
-    fire_delay_ms = random(200,2500);
+      islive=true;
+      _type= random(1, 5);    
+      position.x = 100;
+      position.y = random(10, 50);
+      _lastx=_x;
+      _lasty=_y;
+      
+      last_millis = millis();
+      fire_delay_ms = random(200,2500);
+      
+      total_enemies++;
+    }
 }
 
 
@@ -242,8 +271,7 @@ void Enemy::update()
 {
   
   if (!islive){return;}
-  
-  const unsigned char *sprite;
+    
   float animx;
   float animy;
   
@@ -296,12 +324,49 @@ void Enemy::update()
 
 void Enemy::destroy()
 {
+   display.drawBitmap(_lastx, _lasty,  sprite, 5, 5, 0); // Erase
    islive=false; 
+   total_enemies--;
 }
 
-tPos Enemy::getPosition()
+/*======================================================================
+  Collider class
+  ======================================================================*/
+class Collider 
+{
+  public:
+    void check(Battleship m_nave, Enemy *m_enemy);
+};
+
+//Check for collisions
+void Collider::check(Battleship m_nave, Enemy *m_enemy)
 {
   
+   //Get all our battleship shots
+   for (int i=0 ; i<MAX_FIRES; i++)
+   {
+     if (m_nave.fires[i].x > 0)
+     {
+       
+       // Check all enemies position for collision
+       for (int j=0;j<MAX_ENEMIES ; j++)
+       {
+         //fires[i].x
+         //fires[i].y     
+         if (m_enemy[j].islive)
+         {
+           if (m_nave.isInsideRect(m_nave.getTpos(m_nave.fires[i].x, m_nave.fires[i].y), 
+                            m_nave.getTpos(m_enemy[j]._x, m_enemy[j]._y), 
+                            ENEMY_WIDTH, ENEMY_HEIGHT))  
+                          {
+                            // Alien collided!
+                            m_enemy[j].destroy();
+                            m_nave.fires[i].x=0;
+                          }  
+         }
+       }
+     }
+   }
 }
 
 /*======================================================================
@@ -347,6 +412,7 @@ void Starfield::update()
 Battleship nave;
 Starfield stars;
 Enemy enemies[MAX_ENEMIES];
+Collider collisions;
 
 float inc=0;
 unsigned long last_fire=millis();
@@ -373,8 +439,7 @@ void loop() {
   {
       if (total_enemies < max_enemies)
       {
-       enemies[total_enemies].create(); 
-       total_enemies++;
+       enemies[total_enemies].create();        
        last_enemy=millis();
       }
   }  
@@ -382,7 +447,8 @@ void loop() {
   inc+=0.06;
            
      stars.update();
-     nave.update();    
+     nave.update();  
+     collisions.check(nave, enemies);
      
      for(x=0;x<MAX_ENEMIES;x++)
      {
