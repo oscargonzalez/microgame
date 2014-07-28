@@ -26,7 +26,13 @@ Adafruit_SSD1306 display(OLED_DC, OLED_RESET, OLED_CS);
 #define BATTESHIP_FIRE_WIDTH    3  //Width of the shot
 #define BATTESHIP_FIRE_SPEED    3 
 
-// Define enemy types
+// Define enemy
+#define ENEMY_WIDTH       5
+#define ENEMY_HEIGHT      5
+#define ENEMY_MAX_FIRES   3
+#define ENEMY_FIRES_WIDTH 3
+#define ENEMY_FIRES_SPEED 3
+
 #define ENEMY_TYPE_1    0
 #define ENEMY_TYPE_2    1
 #define ENEMY_TYPE_3    2
@@ -34,7 +40,8 @@ Adafruit_SSD1306 display(OLED_DC, OLED_RESET, OLED_CS);
 #define ENEMY_TYPE_5    4
 
 #define MAX_ENEMIES     6 // More enemies = more fun and less RAM...
-char max_enemies  = 1; // This will change in realtime (more enemies, more dificult!)
+char max_enemies  = 3; // This will change in realtime (more enemies, more dificult!)
+char total_enemies  = 0; // This will change in realtime (more enemies, more dificult!)
 
 // Splash logo 128x64
 const unsigned char PROGMEM splash_logo [] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 192, 48, 192, 0, 0, 0, 0, 15, 224, 0, 0, 0, 0, 0, 0, 0, 224, 112, 0, 0, 0, 0, 0, 56, 0, 0, 0, 0, 0, 0, 0, 0, 224, 240, 0, 0, 0, 0, 0, 96, 0, 0, 0, 0, 0, 0, 0, 1, 225, 224, 0, 0, 0, 0, 0, 192, 0, 0, 0, 0, 0, 0, 0, 1, 243, 96, 0, 0, 0, 0, 0, 192, 0, 0, 0, 0, 0, 0, 0, 1, 182, 97, 131, 240, 254, 7, 192, 192, 3, 248, 31, 248, 15, 128, 0, 3, 60, 195, 6, 1, 140, 28, 193, 135, 128, 28, 49, 156, 24, 192, 0, 3, 60, 195, 12, 1, 128, 48, 97, 129, 128, 12, 49, 140, 48, 192, 0, 3, 56, 195, 12, 1, 128, 48, 97, 129, 128, 12, 49, 140, 48, 192, 0, 6, 1, 134, 24, 3, 0, 96, 195, 3, 0, 24, 99, 24, 96, 192, 0, 6, 1, 134, 24, 3, 0, 96, 195, 3, 7, 248, 99, 24, 127, 192, 0, 6, 1, 134, 24, 3, 0, 96, 195, 3, 12, 24, 99, 24, 96, 0, 0, 12, 3, 12, 48, 6, 0, 193, 134, 6, 24, 48, 198, 48, 192, 0, 0, 12, 3, 12, 48, 6, 0, 193, 135, 6, 24, 48, 198, 48, 192, 0, 0, 12, 3, 12, 56, 6, 0, 231, 3, 6, 24, 48, 198, 48, 192, 0, 0, 24, 6, 24, 31, 12, 0, 124, 1, 252, 15, 225, 140, 96, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 28, 0, 0, 0, 14, 0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 34, 0, 0, 0, 17, 0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 65, 56, 227, 148, 32, 156, 243, 231, 39, 62, 0, 0, 0, 0, 0, 0, 65, 69, 20, 88, 32, 34, 136, 72, 168, 132, 0, 0, 0, 0, 0, 0, 65, 49, 3, 208, 35, 162, 136, 135, 175, 136, 0, 0, 0, 0, 0, 0, 65, 9, 4, 80, 32, 162, 136, 136, 168, 8, 0, 0, 0, 0, 0, 0, 34, 69, 20, 208, 17, 34, 137, 9, 168, 144, 0, 0, 0, 0, 0, 0, 28, 56, 227, 80, 14, 28, 139, 230, 167, 62, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 7, 28, 32, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 8, 162, 96, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 34, 104, 0, 162, 161, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 34, 152, 0, 162, 33, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 34, 136, 1, 34, 34, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 34, 136, 2, 34, 35, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 166, 152, 4, 34, 32, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 154, 105, 15, 156, 32, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };    
@@ -54,6 +61,9 @@ void setup()   {
   
   // by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
   display.begin(SSD1306_SWITCHCAPVCC);
+  
+  randomSeed(analogRead(0));
+  
 /*  
   // Splash logo!
   display.clearDisplay();
@@ -190,41 +200,106 @@ class Enemy {
     
   private:
     boolean islive; // Enemy is alive!
-    int type;        // Type of enemy
+    int _type;        // Type of enemy
     int _lastx;
     int _lasty;
+    tPos position;
     int _x;
     int _y;    
     unsigned long last_millis;  
+    unsigned long fire_delay_ms;  
 };
 
 Enemy::Enemy()
 {
     islive=false;
-    type=0;
+    _type=0;
     _lastx=0;
     _lasty=0;
     _x=0;
-    _y=0;    
-    last_millis=0;
-}
-
-void Enemy::update()
-{
-  
-}
-
-tPos Enemy::getPosition()
-{
-  
+    _y=0;
+    position.x=0;
+    position.y=0;
+    fire_delay_ms=0;
+    last_millis=0;    
 }
 
 void Enemy::create()
 {
+    islive=true;
+    _type= random(1, 5);    
+    position.x = 100;
+    position.y = random(10, 50);
+    _lastx=_x;
+    _lasty=_y;
+    
+    last_millis = millis();
+    fire_delay_ms = random(200,2500);
+}
+
+
+void Enemy::update()
+{
+  
+  if (!islive){return;}
+  
+  const unsigned char *sprite;
+  float animx;
+  float animy;
+  
+  switch (_type)
+  {
+     case 1: {
+       sprite=enemy1; 
+       animx = (0.001*(millis()-last_millis));
+       animy = (0.003*(millis()-last_millis));
+       _x = position.x+sin(animx)*20;
+       _y = position.y+cos(animx)*16;       
+     } break;
+     case 2: {
+       sprite=enemy2; 
+       animx = (0.002*(millis()-last_millis));
+       animy = (0.009*(millis()-last_millis));
+       _x = position.x+sin(animx)*20;
+       _y = position.y+cos(animx)*16;              
+     } break;
+     case 3: { 
+       sprite=enemy3; 
+       animx = (0.0005*(millis()-last_millis));
+       animy = (0.009*(millis()-last_millis));
+       _x = position.x+cos(animx)*20;
+       _y = position.y+sin(animx)*16;              
+     } break;
+     case 4: { 
+       sprite=enemy4; 
+       animx = (0.003*(millis()-last_millis));
+       animy = (0.005*(millis()-last_millis));
+       _x = position.x+sin(animx)*20;
+       _y = position.y+cos(animx)*16;              
+     } break;
+     case 5: {
+       sprite=enemy5; 
+       animx = (0.008*(millis()-last_millis));
+       animy = (0.0007*(millis()-last_millis));
+       _x = position.x+cos(animx)*20;
+       _y = position.y+sin(animx)*16;              
+     } break;
+  }
+  
+  display.drawBitmap(_lastx, _lasty,  sprite, 5, 5, 0); // Erase
+  
+  display.drawBitmap(_x, _y,  sprite, 5, 5, 1); // Draw
+  _lastx = _x;
+  _lasty = _y;  
   
 }
 
 void Enemy::destroy()
+{
+   islive=false; 
+}
+
+tPos Enemy::getPosition()
 {
   
 }
@@ -243,8 +318,7 @@ class Starfield
 };
 
 Starfield::Starfield()
-{
-  randomSeed(analogRead(0));
+{  
   for (char i=0; i<MAX_STARS ; i++)
   {
       stars[i].x = random(0, 127);
@@ -276,6 +350,7 @@ Enemy enemies[MAX_ENEMIES];
 
 float inc=0;
 unsigned long last_fire=millis();
+unsigned long last_enemy=millis();
 
 /*======================================================================
   Main loop
@@ -286,17 +361,35 @@ void loop() {
   
   nave.setPosition(0, 32+sin(inc)*20);
   
+  // Create fake fire
   if (millis()-last_fire > 400)
   {
      nave.Fire(); 
      last_fire=millis();
   }
   
+  // Create enemies
+  if (millis()-last_enemy > 1000)
+  {
+      if (total_enemies < max_enemies)
+      {
+       enemies[total_enemies].create(); 
+       total_enemies++;
+       last_enemy=millis();
+      }
+  }  
+  
   inc+=0.06;
-      
-     nave.update();    
+           
      stars.update();
+     nave.update();    
      
+     for(x=0;x<MAX_ENEMIES;x++)
+     {
+       enemies[x].update();
+     }
+    
+    /* 
     display.setTextSize(0);
     display.setTextColor(WHITE);
     display.setCursor(0,0);
@@ -308,7 +401,7 @@ void loop() {
     display.drawBitmap(64, 30, enemy3, 5, 5, 1);
     display.drawBitmap(64, 40, enemy4, 5, 5, 1);
     display.drawBitmap(64, 50, enemy5, 5, 5, 1);
-     
+    */ 
     display.display();    
   
 }
