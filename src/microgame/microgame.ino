@@ -56,6 +56,13 @@ const unsigned char PROGMEM enemy3 [] = { 216, 112, 80, 112, 168 };
 const unsigned char PROGMEM enemy4 [] = { 136, 168, 248, 112, 216 };    
 const unsigned char PROGMEM enemy5 [] = { 80, 248, 248, 112, 168 };    
 
+//Enemy explosion
+const unsigned char PROGMEM enemy_explode1 [] = { 0, 0, 32, 0, 0 };    
+const unsigned char PROGMEM enemy_explode2 [] = { 0, 80, 32, 80, 0 };    
+const unsigned char PROGMEM enemy_explode3 [] = { 136, 80, 32, 80, 136 };    
+const unsigned char PROGMEM enemy_explode4 [] = { 136, 80, 0, 80, 136 };    
+const unsigned char PROGMEM enemy_explode5 [] = {  136, 0, 0, 0, 136 };    
+
 void setup()   {                
   Serial.begin(9600);
   
@@ -454,6 +461,12 @@ void loop() {
      {
        enemies[x].update();
      }
+     
+    display.drawBitmap(20, 20,  enemy_explode1, 5, 5, 1);     
+    display.drawBitmap(20, 30,  enemy_explode2, 5, 5, 1);     
+    display.drawBitmap(20, 40,  enemy_explode3, 5, 5, 1);     
+    display.drawBitmap(20, 50,  enemy_explode4, 5, 5, 1);     
+    display.drawBitmap(20, 59,  enemy_explode5, 5, 5, 1);     
     
     /* 
     display.setTextSize(0);
