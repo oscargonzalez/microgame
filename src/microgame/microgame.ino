@@ -425,6 +425,8 @@ Collider collisions;
 float inc=0;
 unsigned long last_fire=millis();
 unsigned long last_enemy=millis();
+unsigned long last_time=millis();
+int fps=0;
 
 /*======================================================================
   Main loop
@@ -483,6 +485,19 @@ void loop() {
     display.drawBitmap(64, 50, enemy5, 5, 5, 1);
     */ 
     display.display();    
+   
+  //FPS counter 
+  if (millis()-last_time > 1000)
+  {
+     last_time=millis();
+     Serial.print(fps);
+     Serial.println(" FPS");
+     fps=0;
+  }    
+  else
+  {
+     fps++; 
+  }
   
 }
 
