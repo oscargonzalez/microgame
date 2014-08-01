@@ -60,7 +60,7 @@ const unsigned char PROGMEM number_8 [] = { 240, 144, 240, 144, 240  }; // 8
 const unsigned char PROGMEM number_9 [] = { 240, 144, 240, 16, 112 }; // 9    
   
 // Ship: 10x7
-const unsigned char PROGMEM ship [] = { 112, 0, 243, 0, 121, 128, 63, 192, 121, 128, 243, 0, 112, 0 };    
+const unsigned char PROGMEM ship [] = {  240, 0, 249, 0, 48, 128, 127, 192, 48, 128, 249, 0, 240, 0 };    
 
 // enemies: 5x5
 const unsigned char PROGMEM enemy1 [] = { 32, 168, 248, 112, 136 }; 
@@ -242,6 +242,7 @@ class Enemy {
     
     // Internals (also public...)
     boolean islive; // Enemy is alive!
+    boolean isdead; // Enemy died!
     int _type;        // Type of enemy
     int _lastx;
     int _lasty;
@@ -256,6 +257,7 @@ class Enemy {
 Enemy::Enemy()
 {
     islive=false;
+    isdead=false;
     _type=0;
     _lastx=0;
     _lasty=0;
@@ -273,6 +275,7 @@ void Enemy::create()
     {
     
       islive=true;
+      isdead=false;
       _type= random(1, 5);    
       position.x = 100;
       position.y = random(10, 50);
@@ -290,7 +293,7 @@ void Enemy::create()
 void Enemy::update()
 {
   
-  if (!islive){return;}
+  if ( (!islive) ) {return;}
     
   float animx;
   float animy;
