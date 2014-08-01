@@ -3,6 +3,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+/*
 // If using software SPI (the default case):
 #define OLED_MOSI   9
 #define OLED_CLK   10
@@ -10,13 +11,13 @@
 #define OLED_CS    12
 #define OLED_RESET 13
 Adafruit_SSD1306 display(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
-
-/* Uncomment this block to use hardware SPI
+*/
+// Uncomment this block to use hardware SPI
 #define OLED_DC     6
 #define OLED_CS     7
 #define OLED_RESET  8
 Adafruit_SSD1306 display(OLED_DC, OLED_RESET, OLED_CS);
-*/
+
 
 #define MAX_STARS          10 // Starfield config. The more, the poor...
 #define SCOREBOARD_HEIGHT  8
