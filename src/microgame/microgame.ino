@@ -33,6 +33,7 @@ Adafruit_SSD1306 display(OLED_DC, OLED_RESET, OLED_CS);
 #define BATTESHIP_HEIGHT   7
 #define BATTESHIP_FIRE_WIDTH    3  //Width of the shot
 #define BATTESHIP_FIRE_SPEED    3 
+#define BATTESHIP_FIRE_DELAY    90 //delay between shots in ms
 
 // Define enemy
 #define ENEMY_WIDTH       5
@@ -155,6 +156,7 @@ class Battleship
     int _velocity;   
     char fire_count;
     tPos fires[MAX_FIRES];
+    unsigned long last_fire;
 };
 
 Battleship::Battleship()
@@ -167,6 +169,7 @@ Battleship::Battleship()
    _lasty=0;
    _velocity=2;
    fire_count=0;
+   last_fire=0;
    for (i=0;i<MAX_FIRES;i++) { fires[i].x=0; }
 }
 
@@ -179,6 +182,8 @@ void Battleship::Fire()
 {
   if (fire_count < MAX_FIRES)
   {
+    if (millis()-last_fire > BATTESHIP_FIRE_DELAY)
+    {
      for (int i=0 ; i<MAX_FIRES; i++)
      {
        if (fires[i].x == 0)
@@ -186,9 +191,11 @@ void Battleship::Fire()
          fires[i].x = _x + BATTESHIP_WIDTH;
          fires[i].y = _y + (BATTESHIP_HEIGHT/2); // Divide in realtime is bad ;)
          fire_count++;
+         last_fire=millis();
          break;
        }
      }
+    }
   }
 }
 
@@ -448,10 +455,64 @@ void Starfield::update()
      
 }
 
+/*======================================================================
+  Controls class definition
+  ======================================================================*/
+class Controls {
+  public:
+    Controls();
+    boolean getButton(int button_pin);
+    
+    boolean currentState;
+    boolean lastState;
+    boolean debouncedState;
+    int debounceInterval;
+    unsigned long timeOfLastButtonEvent;
+};  
+
+Controls::Controls()
+{
+    currentState = LOW;//stroage for current measured button state
+    lastState = LOW;//storage for last measured button state
+    debouncedState = LOW;//debounced button state      
+    debounceInterval = 20;//wait 20 ms for button pin to settle
+    timeOfLastButtonEvent = 0;//store the last time the button state changed        
+}
+
+boolean Controls::getButton(int button_pin)
+{
+  
+  //---
+  
+  currentState = digitalRead(BUTTON_A);
+  unsigned long currentTime = millis();
+  
+  if (currentState != lastState){
+    timeOfLastButtonEvent = currentTime;
+  }
+
+  if (currentTime - timeOfLastButtonEvent > debounceInterval){//if enough time has passed
+    if (currentState != debouncedState){//if the current state is still different than our last stored debounced state
+      debouncedState = currentState;//update the debounced state
+      
+      //trigger an event
+      if (debouncedState == HIGH){
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+  
+  lastState = currentState;
+  
+}
+
 Battleship nave;
 Starfield stars;
 Enemy enemies[MAX_ENEMIES];
 Collider collisions;
+Controls  controls;
 
 float inc=0;
 unsigned long last_fire=millis();
@@ -487,7 +548,8 @@ void loop() {
   nave.setPosition(0, 32+sin(inc)*20);
   
   // Create fake fire
-  if (millis()-last_fire > 400)  
+  //if (millis()-last_fire > 400)  
+  if (controls.getButton(BUTTON_A))
   {
      nave.Fire(); 
      last_fire=millis();
