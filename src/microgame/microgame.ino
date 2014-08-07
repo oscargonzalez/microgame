@@ -18,6 +18,13 @@ Adafruit_SSD1306 display(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 #define OLED_RESET  8
 Adafruit_SSD1306 display(OLED_DC, OLED_RESET, OLED_CS);
 
+//Define buttons
+#define BUTTON_UP     A0
+#define BUTTON_DOWN   A1
+#define BUTTON_LEFT   2
+#define BUTTON_RIGHT  A3
+#define BUTTON_A      4
+#define BUTTON_B      5
 
 #define MAX_STARS          10 // Starfield config. The more, the poor...
 #define SCOREBOARD_HEIGHT  8
@@ -82,7 +89,16 @@ void setup()   {
   // by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
   display.begin(SSD1306_SWITCHCAPVCC);
   
+  //Randomize!
   randomSeed(analogRead(0));
+  
+  //Setup controls  
+  pinMode(BUTTON_UP, INPUT);  
+  pinMode(BUTTON_DOWN, INPUT);
+  pinMode(BUTTON_LEFT, INPUT);
+  pinMode(BUTTON_RIGHT, INPUT);
+  pinMode(BUTTON_A, INPUT);
+  pinMode(BUTTON_B, INPUT);  
   
 /*  
   // Splash logo!
@@ -471,7 +487,7 @@ void loop() {
   nave.setPosition(0, 32+sin(inc)*20);
   
   // Create fake fire
-  if (millis()-last_fire > 400)
+  if (millis()-last_fire > 400)  
   {
      nave.Fire(); 
      last_fire=millis();
@@ -486,7 +502,13 @@ void loop() {
        last_enemy=millis();
       }
   }  
-  
+
+  if (digitalRead(BUTTON_UP)) { Serial.println("UP");  }  
+  if (digitalRead(BUTTON_DOWN)) { Serial.println("DOWN");  }  
+  if (digitalRead(BUTTON_LEFT)) { Serial.println("LEFT");  }
+  if (digitalRead(BUTTON_RIGHT)) { Serial.println("RIGHT");  }  
+  if (digitalRead(BUTTON_A)) { Serial.println("A");  }
+  if (digitalRead(BUTTON_B)) { Serial.println("B");  }
   inc+=0.06;
            
      stars.update();
