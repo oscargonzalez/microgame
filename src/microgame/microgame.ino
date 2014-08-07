@@ -126,9 +126,19 @@ void setup()   {
 
 }
 
+//Define a 2D point
 struct tPos {
    char x;
    char y; 
+};
+
+// define a button
+struct control_def {
+    boolean currentState;
+    boolean lastState;
+    boolean debouncedState;
+    int debounceInterval;
+    unsigned long timeOfLastButtonEvent;  
 };
 
 /*======================================================================
@@ -463,48 +473,55 @@ class Controls {
     Controls();
     boolean getButton(int button_pin);
     
-    boolean currentState;
-    boolean lastState;
-    boolean debouncedState;
-    int debounceInterval;
-    unsigned long timeOfLastButtonEvent;
+    control_def _ctrl[6];
 };  
 
 Controls::Controls()
 {
-    currentState = LOW;//stroage for current measured button state
-    lastState = LOW;//storage for last measured button state
-    debouncedState = LOW;//debounced button state      
-    debounceInterval = 20;//wait 20 ms for button pin to settle
-    timeOfLastButtonEvent = 0;//store the last time the button state changed        
+    for(int i=0;i<6;i++)
+    {
+      _ctrl[i].currentState = LOW;//stroage for current measured button state
+      _ctrl[i].lastState = LOW;//storage for last measured button state
+      _ctrl[i].debouncedState = LOW;//debounced button state      
+      _ctrl[i].debounceInterval = 20;//wait 20 ms for button pin to settle
+      _ctrl[i].timeOfLastButtonEvent = 0;//store the last time the button state changed        
+    }
 }
 
 boolean Controls::getButton(int button_pin)
 {
   
   //---
+  int pin;
   
-  currentState = digitalRead(button_pin);
+  if (button_pin == BUTTON_UP) { pin=0; }
+  if (button_pin == BUTTON_DOWN) { pin=1; }
+  if (button_pin == BUTTON_LEFT) { pin=2; }
+  if (button_pin == BUTTON_RIGHT) { pin=3; }
+  if (button_pin == BUTTON_A) { pin=4; }
+  if (button_pin == BUTTON_B) { pin=5; }
+  
+  _ctrl[pin].currentState = digitalRead(button_pin);
   unsigned long currentTime = millis();
   
-  if (currentState != lastState){
-    timeOfLastButtonEvent = currentTime;
+  if (_ctrl[pin].currentState != _ctrl[pin].lastState){
+    _ctrl[pin].timeOfLastButtonEvent = currentTime;
   }
 
-  if (currentTime - timeOfLastButtonEvent > debounceInterval){//if enough time has passed
-    if (currentState != debouncedState){//if the current state is still different than our last stored debounced state
-      debouncedState = currentState;//update the debounced state
+  if (currentTime - _ctrl[pin].timeOfLastButtonEvent > _ctrl[pin].debounceInterval){//if enough time has passed
+    if (_ctrl[pin].currentState != _ctrl[pin].debouncedState){//if the current state is still different than our last stored debounced state
+      _ctrl[pin].debouncedState = _ctrl[pin].currentState;//update the debounced state
       
       //trigger an event
-      if (debouncedState == HIGH){
+      if (_ctrl[pin].debouncedState == HIGH){
         return true;
       } else {
         return false;
       }
     }
   }
-  
-  lastState = currentState;
+
+  _ctrl[pin].lastState = _ctrl[pin].currentState;
   
 }
 
@@ -515,7 +532,6 @@ Collider collisions;
 Controls  controls;
 
 float inc=0;
-unsigned long last_fire=millis();
 unsigned long last_enemy=millis();
 unsigned long last_time=millis();
 int fps=0;
@@ -549,15 +565,8 @@ void loop() {
   if (controls.getButton(BUTTON_UP)) { nave.moveUp(); }
   if (controls.getButton(BUTTON_DOWN)) { nave.moveDown(); }
   if (controls.getButton(BUTTON_LEFT)) { nave.moveLeft(); }
-  if (controls.getButton(BUTTON_RIGHT)) { nave.moveRight(); }  
-  
-  // Create fake fire
-  //if (millis()-last_fire > 400)  
-  if (controls.getButton(BUTTON_A))
-  {
-     nave.Fire(); 
-     last_fire=millis();
-  }
+  if (controls.getButton(BUTTON_RIGHT)) { nave.moveRight(); }    
+  if (controls.getButton(BUTTON_A)) { nave.Fire(); }
   
   // Create enemies
   if (millis()-last_enemy > 1000)
