@@ -173,10 +173,10 @@ Battleship::Battleship()
    for (i=0;i<MAX_FIRES;i++) { fires[i].x=0; }
 }
 
-void Battleship::moveRight()   { _lastx=_x; _x += _velocity; }
-void Battleship::moveLeft()    { _lastx=_x; _x -= _velocity; }
-void Battleship::moveUp()      { _lasty=_y; _y -= _velocity; }
-void Battleship::moveDown()    { _lasty=_y; _y += _velocity; }
+void Battleship::moveRight()   { if (_x < (128-BATTESHIP_WIDTH)-2) { _lastx=_x; _lasty=_y; update(); _x ++; } }
+void Battleship::moveLeft()    { if (_x > 0) { _lastx=_x; _lasty=_y; update(); _x --; } }
+void Battleship::moveUp()      { if (_y > 2) { _lastx=_x; _lasty=_y; update(); _y --; } }
+void Battleship::moveDown()    { if (_y < (64-BATTESHIP_HEIGHT)) { _lastx=_x; _lasty=_y; update(); _y ++; } }
 void Battleship::setPosition(int x, int y) { _lastx=_x; _lasty=_y; _x=x; _y=y; }
 void Battleship::Fire()
 {
@@ -205,8 +205,8 @@ void Battleship::update()
   int i,j;
   
   // Update position
-  display.drawBitmap(_lastx, _lasty,  ship, 10, 7, 0);
-  display.drawBitmap(_x, _y,  ship, 10, 7, 1);
+  display.drawBitmap(_lastx, _lasty,  ship, BATTESHIP_WIDTH, BATTESHIP_HEIGHT, 0);
+  display.drawBitmap(_x, _y,  ship, BATTESHIP_WIDTH, BATTESHIP_HEIGHT, 1);
 
   // Update fire
   for (i=0 ; i<MAX_FIRES ; i++)
@@ -484,7 +484,7 @@ boolean Controls::getButton(int button_pin)
   
   //---
   
-  currentState = digitalRead(BUTTON_A);
+  currentState = digitalRead(button_pin);
   unsigned long currentTime = millis();
   
   if (currentState != lastState){
@@ -545,7 +545,11 @@ void loop() {
   
   char x=0;
   
-  nave.setPosition(0, 32+sin(inc)*20);
+  //nave.setPosition(0, 32+sin(inc)*20);
+  if (controls.getButton(BUTTON_UP)) { nave.moveUp(); }
+  if (controls.getButton(BUTTON_DOWN)) { nave.moveDown(); }
+  if (controls.getButton(BUTTON_LEFT)) { nave.moveLeft(); }
+  if (controls.getButton(BUTTON_RIGHT)) { nave.moveRight(); }  
   
   // Create fake fire
   //if (millis()-last_fire > 400)  
