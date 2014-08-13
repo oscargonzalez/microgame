@@ -2,6 +2,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <EEPROM.h>
 
 // Uncomment this block to use hardware SPI
 #define OLED_DC     6
@@ -77,52 +78,6 @@ const unsigned char PROGMEM enemy_explode3 [] = { 136, 80, 32, 80, 136 };
 const unsigned char PROGMEM enemy_explode4 [] = { 136, 80, 0, 80, 136 };    
 const unsigned char PROGMEM enemy_explode5 [] = {  136, 0, 0, 0, 136 };    
 
-void setup()   {                
-  Serial.begin(9600);
-  
-  // by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
-  display.begin(SSD1306_SWITCHCAPVCC);
-  
-  //Randomize!
-  randomSeed(analogRead(0));
-  
-  //Setup controls  
-  pinMode(BUTTON_UP, INPUT);  
-  pinMode(BUTTON_DOWN, INPUT);
-  pinMode(BUTTON_LEFT, INPUT);
-  pinMode(BUTTON_RIGHT, INPUT);
-  pinMode(BUTTON_A, INPUT);
-  pinMode(BUTTON_B, INPUT);  
-
-  // Set default text size
-  display.setTextSize(1);
-  display.setTextColor(WHITE);  
-    
-/*  
-  // Splash logo!
-  display.clearDisplay();
-  display.drawBitmap(0, 0,  splash_logo, 128, 64, 1);
-  display.display();    
-  
-  for (int i=0 ; i<10 ; i++)
-  {
-    display.invertDisplay(true);
-    delay(100); 
-    display.invertDisplay(false);
-    delay(100);   
-  }
-  
-  delay(2000);
-  
-  display.startscrollleft(0x00, 0x0F);
-  delay(5000);
-  display.stopscroll();  
-*/
-  display.clearDisplay();
-  
-
-}
-
 //Define a 2D point
 struct tPos {
    int x;
@@ -156,8 +111,6 @@ class Battleship
     boolean isInsideRect(tPos point, tPos rectpos, int width, int height);
     
     // Internals (also public...)
-    int _lastx;
-    int _lasty;
     int _x;
     int _y;   
     int _velocity;   
@@ -184,14 +137,15 @@ void Battleship::moveUp()      { if (_y > 8)                        { _y --; } }
 void Battleship::moveDown()    { if (_y < (64-BATTESHIP_HEIGHT))    { _y ++; } }
 void Battleship::setPosition(int x, int y) { _x=x; _y=y; }
 void Battleship::Fire()
-{
-  Serial.print("fire_count: ");
-  Serial.println(fire_count, DEC);
+{  
 
   if (fire_count < MAX_FIRES)
   {
     if (millis()-last_fire > BATTESHIP_FIRE_DELAY)
     {
+
+      tone(3, 100, 120);
+
      for (int i=0 ; i<MAX_FIRES; i++)
      {
         Serial.print(fires[i].x); Serial.print("-");
@@ -456,6 +410,7 @@ void Collider::check(Battleship m_nave, Enemy *m_enemy)
 
                               m_enemy[j].destroy(); // Destroy enemy
                               m_nave.fires[i].x=0;
+                              tone(3, 600, 80);
                             }
                           }  
          }
@@ -474,10 +429,12 @@ void Collider::check(Battleship m_nave, Enemy *m_enemy)
                                  m_nave.getTpos(m_nave._x, m_nave._y), 
                                  ENEMY_WIDTH, ENEMY_HEIGHT))
                                  {
-                                    m_nave._x = 0;
-                                    m_nave._y = 32;                                    
                                     max_lives--;
-                                                                       
+                                    m_nave.setPosition(0, 32);
+                                    m_nave.update();  
+                                    tone(3, 1000, 1000);
+                                    delay(500);
+                                    break;                                    
                                  }          
      }
    }
@@ -593,11 +550,58 @@ class Scores {
     Scores();
     void draw();    
 
+    // Read/write scores as INTEGER (Thanks to http://forum.arduino.cc/index.php/topic,37470.0.html)
+    void saveScore(int p_value);
+    unsigned int readScore();
+
+    int high_score;
+
 };
 
 Scores::Scores()
 {
 
+  high_score = 0;
+
+  // First check EEPROM. Must have 'M' on address 0 and 'G' on address 1
+  // Hi score start at address 2
+  if ( (EEPROM.read(0) != 'M') && (EEPROM.read(0) != 'G') )
+  {
+    // It seems the EEPROM is empty or not initialised
+    EEPROM.write(0, 'M');
+    EEPROM.write(1, 'G');
+    saveScore(0);        
+  }
+  else
+  {
+    high_score = readScore();
+  }
+
+  Serial.print("High score is: ");
+  Serial.println(high_score);
+
+}
+
+//This function will write a 2 byte integer to the eeprom at the specified address and address + 1
+void Scores::saveScore(int p_value)
+{
+  int p_address = 2;
+
+  byte lowByte = ((p_value >> 0) & 0xFF);
+  byte highByte = ((p_value >> 8) & 0xFF);
+
+  EEPROM.write(p_address, lowByte);
+  EEPROM.write(p_address + 1, highByte);
+}
+
+//This function will read a 2 byte integer from the eeprom at the specified address and address + 1
+unsigned int Scores::readScore()
+{
+  int p_address = 2;
+  byte lowByte = EEPROM.read(p_address);
+  byte highByte = EEPROM.read(p_address + 1);
+
+  return ((lowByte << 0) & 0xFF) + ((highByte << 8) & 0xFF00);
 }
 
 void Scores::draw()
@@ -647,6 +651,64 @@ void printNumbers(int x, int y, char* str) {
   }
 }
 
+void setup()   {                
+  Serial.begin(9600);
+  
+  // by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
+  display.begin(SSD1306_SWITCHCAPVCC);
+  display.clearDisplay();
+  
+  //Randomize!
+  randomSeed(analogRead(0));
+  
+  //Setup controls  
+  pinMode(BUTTON_UP, INPUT);  
+  pinMode(BUTTON_DOWN, INPUT);
+  pinMode(BUTTON_LEFT, INPUT);
+  pinMode(BUTTON_RIGHT, INPUT);
+  pinMode(BUTTON_A, INPUT);
+  pinMode(BUTTON_B, INPUT);  
+
+  // Set default text size
+  display.setTextSize(1);
+  display.setTextColor(WHITE);  
+  display.setCursor(10,27);
+  display.print("HI SCORE: ");     
+  display.print(score.high_score);       
+
+  display.display();        
+
+  tone(3, 1000, 300);
+  tone(3, 1500, 300);
+  tone(3, 2000, 600);
+
+  delay(2000);
+    
+/*  
+  // Splash logo!
+  display.clearDisplay();
+  display.drawBitmap(0, 0,  splash_logo, 128, 64, 1);
+  display.display();    
+  
+  for (int i=0 ; i<10 ; i++)
+  {
+    display.invertDisplay(true);
+    delay(100); 
+    display.invertDisplay(false);
+    delay(100);   
+  }
+  
+  delay(2000);
+  
+  display.startscrollleft(0x00, 0x0F);
+  delay(5000);
+  display.stopscroll();  
+*/
+  display.clearDisplay();
+  
+
+}
+
 /*======================================================================
   Main loop
   ======================================================================*/
@@ -663,7 +725,7 @@ void loop() {
   if (controls.getButton(BUTTON_RIGHT)) { nave.moveRight(); }    
   if (controls.getButton(BUTTON_A)) { nave.Fire(); }
   
-  // Create enemies
+  // Create enemies each second
   if (millis()-last_enemy > 1000)
   {
       if (total_enemies < max_enemies)
@@ -673,27 +735,21 @@ void loop() {
       }
   }  
 
-  if (digitalRead(BUTTON_UP)) { Serial.println("UP");  }  
-  if (digitalRead(BUTTON_DOWN)) { Serial.println("DOWN");  }  
-  if (digitalRead(BUTTON_LEFT)) { Serial.println("LEFT");  }
-  if (digitalRead(BUTTON_RIGHT)) { Serial.println("RIGHT");  }  
-  if (digitalRead(BUTTON_A)) { Serial.println("A");  }
-  if (digitalRead(BUTTON_B)) { Serial.println("B");  }
   inc+=0.06;
            
-     stars.update();
-     nave.update();  
-     collisions.check(nave, enemies);
-     
-     for(x=0;x<MAX_ENEMIES;x++)
-     {
-       enemies[x].update();
-     }
+  stars.update();
+  nave.update();  
+  collisions.check(nave, enemies);
 
-     score.draw();     
-          
-    // Draw framebuffer
-    display.display();    
+  for(x=0;x<MAX_ENEMIES;x++)
+  {
+   enemies[x].update();
+  }
+
+  score.draw();     
+      
+  // Draw framebuffer
+  display.display();    
    
   //FPS counter 
   if (millis()-last_time > 1000)
