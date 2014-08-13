@@ -273,8 +273,6 @@ class Enemy {
     boolean islive; // Enemy is alive!
     boolean isdead; // Enemy died!
     int _type;        // Type of enemy
-    int _deadx;       // Store dead position (-1 is default state)
-    int _deady;
     int _deadanim_num;
     tPos position;
     int _x;
@@ -401,8 +399,6 @@ void Enemy::update()
         if (_deadanim_num > 4) {
            // End of dead animation
            _deadanim_num=0;
-           _deadx = -1;
-           _deadx = -1;           
            islive=false; 
            total_enemies--;                     
         }
@@ -413,8 +409,6 @@ void Enemy::update()
 
 void Enemy::destroy()
 {   
-   _deadx = _x;
-   _deadx = _y;
    _deadanim_num = 0;
    last_millis=millis();
 }
@@ -445,6 +439,7 @@ void Collider::check(Battleship m_nave, Enemy *m_enemy)
          //fires[i].y     
          if (m_enemy[j].islive)
          {
+           // Check if we hit some alien
            if (m_nave.isInsideRect(m_nave.getTpos(m_nave.fires[i].x, m_nave.fires[i].y), 
                             m_nave.getTpos(m_enemy[j]._x, m_enemy[j]._y), 
                             ENEMY_WIDTH, ENEMY_HEIGHT))  
@@ -467,6 +462,26 @@ void Collider::check(Battleship m_nave, Enemy *m_enemy)
        }
      }
    }
+
+   // Check if some alien hit the battelship
+   for (int j=0;j<MAX_ENEMIES ; j++)
+   {
+     //fires[i].x
+     //fires[i].y     
+     if (m_enemy[j].islive)
+     {   
+         if (m_nave.isInsideRect(m_nave.getTpos(m_enemy[j]._x, m_enemy[j]._y), 
+                                 m_nave.getTpos(m_nave._x, m_nave._y), 
+                                 ENEMY_WIDTH, ENEMY_HEIGHT))
+                                 {
+                                    m_nave._x = 0;
+                                    m_nave._y = 32;                                    
+                                    max_lives--;
+                                                                       
+                                 }          
+     }
+   }
+
 }
 
 /*======================================================================
