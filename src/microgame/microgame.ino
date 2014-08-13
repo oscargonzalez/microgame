@@ -40,8 +40,9 @@ Adafruit_SSD1306 display(OLED_DC, OLED_RESET, OLED_CS);
 #define ENEMY_TYPE_5    4
 
 #define MAX_ENEMIES     6 // More enemies = more fun and less RAM...
-char max_enemies  = 3; // This will change in realtime (more enemies, more dificult!)
-char total_enemies  = 0; // This will change in realtime (more enemies, more dificult!)
+int max_enemies  = 3; // This will change in realtime (more enemies, more dificult!)
+int total_enemies  = 0; // This will change in realtime (more enemies, more dificult!)
+int current_score = 0; // Current player score
 
 // Splash logo 128x64
 const unsigned char PROGMEM splash_logo [] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 192, 48, 192, 0, 0, 0, 0, 15, 224, 0, 0, 0, 0, 0, 0, 0, 224, 112, 0, 0, 0, 0, 0, 56, 0, 0, 0, 0, 0, 0, 0, 0, 224, 240, 0, 0, 0, 0, 0, 96, 0, 0, 0, 0, 0, 0, 0, 1, 225, 224, 0, 0, 0, 0, 0, 192, 0, 0, 0, 0, 0, 0, 0, 1, 243, 96, 0, 0, 0, 0, 0, 192, 0, 0, 0, 0, 0, 0, 0, 1, 182, 97, 131, 240, 254, 7, 192, 192, 3, 248, 31, 248, 15, 128, 0, 3, 60, 195, 6, 1, 140, 28, 193, 135, 128, 28, 49, 156, 24, 192, 0, 3, 60, 195, 12, 1, 128, 48, 97, 129, 128, 12, 49, 140, 48, 192, 0, 3, 56, 195, 12, 1, 128, 48, 97, 129, 128, 12, 49, 140, 48, 192, 0, 6, 1, 134, 24, 3, 0, 96, 195, 3, 0, 24, 99, 24, 96, 192, 0, 6, 1, 134, 24, 3, 0, 96, 195, 3, 7, 248, 99, 24, 127, 192, 0, 6, 1, 134, 24, 3, 0, 96, 195, 3, 12, 24, 99, 24, 96, 0, 0, 12, 3, 12, 48, 6, 0, 193, 134, 6, 24, 48, 198, 48, 192, 0, 0, 12, 3, 12, 48, 6, 0, 193, 135, 6, 24, 48, 198, 48, 192, 0, 0, 12, 3, 12, 56, 6, 0, 231, 3, 6, 24, 48, 198, 48, 192, 0, 0, 24, 6, 24, 31, 12, 0, 124, 1, 252, 15, 225, 140, 96, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 28, 0, 0, 0, 14, 0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 34, 0, 0, 0, 17, 0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 65, 56, 227, 148, 32, 156, 243, 231, 39, 62, 0, 0, 0, 0, 0, 0, 65, 69, 20, 88, 32, 34, 136, 72, 168, 132, 0, 0, 0, 0, 0, 0, 65, 49, 3, 208, 35, 162, 136, 135, 175, 136, 0, 0, 0, 0, 0, 0, 65, 9, 4, 80, 32, 162, 136, 136, 168, 8, 0, 0, 0, 0, 0, 0, 34, 69, 20, 208, 17, 34, 137, 9, 168, 144, 0, 0, 0, 0, 0, 0, 28, 56, 227, 80, 14, 28, 139, 230, 167, 62, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 7, 28, 32, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 8, 162, 96, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 34, 104, 0, 162, 161, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 34, 152, 0, 162, 33, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 34, 136, 1, 34, 34, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 34, 136, 2, 34, 35, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 166, 152, 4, 34, 32, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 154, 105, 15, 156, 32, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };    
@@ -91,6 +92,10 @@ void setup()   {
   pinMode(BUTTON_RIGHT, INPUT);
   pinMode(BUTTON_A, INPUT);
   pinMode(BUTTON_B, INPUT);  
+
+  // Set default text size
+  display.setTextSize(1);
+  display.setTextColor(WHITE);  
     
 /*  
   // Splash logo!
@@ -164,8 +169,8 @@ Battleship::Battleship()
 {
     int i;
     
-   _x=0;
-   _y=0; 
+   _x = 0;
+   _y = 32 - (BATTESHIP_HEIGHT/2); 
    _velocity=2;
    fire_count=0;
    last_fire=0;
@@ -174,7 +179,7 @@ Battleship::Battleship()
 
 void Battleship::moveRight()   { if (_x < (128-BATTESHIP_WIDTH)-2)  { _x ++; } }
 void Battleship::moveLeft()    { if (_x > 0)                        { _x --; } }
-void Battleship::moveUp()      { if (_y > 2)                        { _y --; } }
+void Battleship::moveUp()      { if (_y > 8)                        { _y --; } }
 void Battleship::moveDown()    { if (_y < (64-BATTESHIP_HEIGHT))    { _y ++; } }
 void Battleship::setPosition(int x, int y) { _x=x; _y=y; }
 void Battleship::Fire()
@@ -276,6 +281,7 @@ class Enemy {
     unsigned long last_millis;  
     unsigned long fire_delay_ms;  
     const unsigned char *sprite;
+    int reward_points;
 };
 
 Enemy::Enemy()
@@ -286,14 +292,14 @@ Enemy::Enemy()
     _x=0;
     _y=0;
 
-    _deadx=-1;
-    _deady=-1;
-    _deadanim_num=0;
+    _deadanim_num=-1;
 
     position.x=0;
     position.y=0;
     fire_delay_ms=0;
     last_millis=0;    
+
+    reward_points=0;
 }
 
 void Enemy::create()
@@ -304,12 +310,20 @@ void Enemy::create()
       islive=true;
       isdead=false;
       _type= random(1, 5);    
+
+      switch (_type)
+      {
+        case 1: reward_points=1; break;
+        case 2: reward_points=2; break;
+        case 3: reward_points=3; break;
+        case 4: reward_points=4; break;
+        case 5: reward_points=5; break;
+      }
+
       position.x = 100;
       position.y = random(10, 50);
 
-      _deadanim_num=0;
-      _deadx=-1;
-      _deady=-1;
+      _deadanim_num=-1;
       
       last_millis = millis();
       fire_delay_ms = random(200,2500);
@@ -327,7 +341,7 @@ void Enemy::update()
   float animx;
   float animy;
 
-  if ( (_deadx == -1) && (_deady == -1) )      
+  if (_deadanim_num == -1)      
   {
     switch (_type)
     {
@@ -438,9 +452,11 @@ void Collider::check(Battleship m_nave, Enemy *m_enemy)
                               m_nave.fires[i].x = 0;   // Stop fire                         
                               m_nave.fires[i].y = 0;   // Stop fire                                                       
 
-                            if (m_enemy[j]._deadanim_num == 0) // If not allready in dead mode
+                            if (m_enemy[j]._deadanim_num == -1) // If not allready in dead mode
                             {
                               // Alien collided!                            
+
+                              current_score += m_enemy[j].reward_points; // Increase current points based on enemy value
 
                               m_enemy[j].destroy(); // Destroy enemy
                               m_nave.fires[i].x=0;
@@ -467,7 +483,7 @@ class Starfield
 
 Starfield::Starfield()
 {  
-  for (char i=0; i<MAX_STARS ; i++)
+  for (int i=0; i<MAX_STARS ; i++)
   {
       stars[i].x = random(0, 127);
       stars[i].y = random(SCOREBOARD_HEIGHT, 63);      
@@ -586,7 +602,7 @@ void printNumbers(int x, int y, char* str) {
   ======================================================================*/
 void loop() {
   
-  char x=0;
+  int x=0;
   
   display.clearDisplay();
   
@@ -623,6 +639,11 @@ void loop() {
      {
        enemies[x].update();
      }
+
+    // Display score
+    display.setCursor(0,0);
+    display.print("SCORE: ");     
+    display.print(current_score);     
           
     // Draw framebuffer
     display.display();    
