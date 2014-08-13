@@ -267,8 +267,9 @@ class Enemy {
     boolean islive; // Enemy is alive!
     boolean isdead; // Enemy died!
     int _type;        // Type of enemy
-    int _lastx;
-    int _lasty;
+    int _deadx;       // Store dead position (-1 is default state)
+    int _deady;
+    int _deadanim_num;
     tPos position;
     int _x;
     int _y;    
@@ -284,6 +285,11 @@ Enemy::Enemy()
     _type=0;
     _x=0;
     _y=0;
+
+    _deadx=-1;
+    _deady=-1;
+    _deadanim_num=0;
+
     position.x=0;
     position.y=0;
     fire_delay_ms=0;
@@ -300,6 +306,10 @@ void Enemy::create()
       _type= random(1, 5);    
       position.x = 100;
       position.y = random(10, 50);
+
+      _deadanim_num=0;
+      _deadx=-1;
+      _deady=-1;
       
       last_millis = millis();
       fire_delay_ms = random(200,2500);
@@ -316,55 +326,82 @@ void Enemy::update()
     
   float animx;
   float animy;
-  
-  switch (_type)
+
+  if ( (_deadx == -1) && (_deady == -1) )      
   {
-     case 1: {
-       sprite=enemy1; 
-       animx = (0.001*(millis()-last_millis));
-       animy = (0.003*(millis()-last_millis));
-       _x = position.x+sin(animx)*20;
-       _y = position.y+cos(animx)*16;       
-     } break;
-     case 2: {
-       sprite=enemy2; 
-       animx = (0.002*(millis()-last_millis));
-       animy = (0.009*(millis()-last_millis));
-       _x = position.x+sin(animx)*20;
-       _y = position.y+cos(animx)*16;              
-     } break;
-     case 3: { 
-       sprite=enemy3; 
-       animx = (0.0005*(millis()-last_millis));
-       animy = (0.009*(millis()-last_millis));
-       _x = position.x+cos(animx)*20;
-       _y = position.y+sin(animx)*16;              
-     } break;
-     case 4: { 
-       sprite=enemy4; 
-       animx = (0.003*(millis()-last_millis));
-       animy = (0.005*(millis()-last_millis));
-       _x = position.x+sin(animx)*20;
-       _y = position.y+cos(animx)*16;              
-     } break;
-     case 5: {
-       sprite=enemy5; 
-       animx = (0.008*(millis()-last_millis));
-       animy = (0.0007*(millis()-last_millis));
-       _x = position.x+cos(animx)*20;
-       _y = position.y+sin(animx)*16;              
-     } break;
+    switch (_type)
+    {
+       case 1: {
+         sprite=enemy1; 
+         animx = (0.001*(millis()-last_millis));
+         animy = (0.003*(millis()-last_millis));
+         _x = position.x+sin(animx)*20;
+         _y = position.y+cos(animx)*16;       
+       } break;
+       case 2: {
+         sprite=enemy2; 
+         animx = (0.002*(millis()-last_millis));
+         animy = (0.009*(millis()-last_millis));
+         _x = position.x+sin(animx)*20;
+         _y = position.y+cos(animx)*16;              
+       } break;
+       case 3: { 
+         sprite=enemy3; 
+         animx = (0.0005*(millis()-last_millis));
+         animy = (0.009*(millis()-last_millis));
+         _x = position.x+cos(animx)*20;
+         _y = position.y+sin(animx)*16;              
+       } break;
+       case 4: { 
+         sprite=enemy4; 
+         animx = (0.003*(millis()-last_millis));
+         animy = (0.005*(millis()-last_millis));
+         _x = position.x+sin(animx)*20;
+         _y = position.y+cos(animx)*16;              
+       } break;
+       case 5: {
+         sprite=enemy5; 
+         animx = (0.008*(millis()-last_millis));
+         animy = (0.0007*(millis()-last_millis));
+         _x = position.x+cos(animx)*20;
+         _y = position.y+sin(animx)*16;              
+       } break;
+    }
+
+    display.drawBitmap(_x, _y,  sprite, 5, 5, 1); // Draw
   }
-  
-  display.drawBitmap(_x, _y,  sprite, 5, 5, 1); // Draw
+  else
+  {
+
+      // Enemy dead animation
+      if (_deadanim_num == 0) { display.drawBitmap(_x, _y,  enemy_explode1, 5, 5, 1); }
+      if (_deadanim_num == 1) { display.drawBitmap(_x, _y,  enemy_explode2, 5, 5, 1); }
+      if (_deadanim_num == 2) { display.drawBitmap(_x, _y,  enemy_explode3, 5, 5, 1); }
+      if (_deadanim_num == 3) { display.drawBitmap(_x, _y,  enemy_explode4, 5, 5, 1); }
+      if (_deadanim_num == 4) { display.drawBitmap(_x, _y,  enemy_explode5, 5, 5, 1); }
+
+      if ( (millis()-last_millis) > 90) { 
+        _deadanim_num++;
+        last_millis=millis();
+        if (_deadanim_num > 4) {
+           // End of dead animation
+           _deadanim_num=0;
+           _deadx = -1;
+           _deadx = -1;           
+           islive=false; 
+           total_enemies--;                     
+        }
+      }      
+  }
   
 }
 
 void Enemy::destroy()
-{
-   //display.drawBitmap(_lastx, _lasty,  sprite, 5, 5, 0); // Erase
-   islive=false; 
-   total_enemies--;
+{   
+   _deadx = _x;
+   _deadx = _y;
+   _deadanim_num = 0;
+   last_millis=millis();
 }
 
 /*======================================================================
@@ -396,10 +433,18 @@ void Collider::check(Battleship m_nave, Enemy *m_enemy)
            if (m_nave.isInsideRect(m_nave.getTpos(m_nave.fires[i].x, m_nave.fires[i].y), 
                             m_nave.getTpos(m_enemy[j]._x, m_enemy[j]._y), 
                             ENEMY_WIDTH, ENEMY_HEIGHT))  
-                          {
-                            // Alien collided!
-                            m_enemy[j].destroy();
-                            m_nave.fires[i].x=0;
+                          {                            
+
+                              m_nave.fires[i].x = 0;   // Stop fire                         
+                              m_nave.fires[i].y = 0;   // Stop fire                                                       
+
+                            if (m_enemy[j]._deadanim_num == 0) // If not allready in dead mode
+                            {
+                              // Alien collided!                            
+
+                              m_enemy[j].destroy(); // Destroy enemy
+                              m_nave.fires[i].x=0;
+                            }
                           }  
          }
        }
@@ -578,14 +623,7 @@ void loop() {
      {
        enemies[x].update();
      }
-     
-    display.drawBitmap(20, 20,  enemy_explode1, 5, 5, 1);     
-    display.drawBitmap(20, 30,  enemy_explode2, 5, 5, 1);     
-    display.drawBitmap(20, 40,  enemy_explode3, 5, 5, 1);     
-    display.drawBitmap(20, 50,  enemy_explode4, 5, 5, 1);     
-    display.drawBitmap(20, 59,  enemy_explode5, 5, 5, 1);       
-    
-     
+          
     // Draw framebuffer
     display.display();    
    
