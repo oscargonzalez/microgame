@@ -119,8 +119,8 @@ void setup()   {
 
 //Define a 2D point
 struct tPos {
-   char x;
-   char y; 
+   int x;
+   int y; 
 };
 
 // define a button
@@ -155,7 +155,7 @@ class Battleship
     int _x;
     int _y;   
     int _velocity;   
-    char fire_count;
+    int fire_count;
     tPos fires[MAX_FIRES];
     unsigned long last_fire;
 };
@@ -166,27 +166,29 @@ Battleship::Battleship()
     
    _x=0;
    _y=0; 
-   _lastx=0;
-   _lasty=0;
    _velocity=2;
    fire_count=0;
    last_fire=0;
    for (i=0;i<MAX_FIRES;i++) { fires[i].x=0; }
 }
 
-void Battleship::moveRight()   { if (_x < (128-BATTESHIP_WIDTH)-2) { _lastx=_x; _lasty=_y; update(); _x ++; } }
-void Battleship::moveLeft()    { if (_x > 0) { _lastx=_x; _lasty=_y; update(); _x --; } }
-void Battleship::moveUp()      { if (_y > 2) { _lastx=_x; _lasty=_y; update(); _y --; } }
-void Battleship::moveDown()    { if (_y < (64-BATTESHIP_HEIGHT)) { _lastx=_x; _lasty=_y; update(); _y ++; } }
-void Battleship::setPosition(int x, int y) { _lastx=_x; _lasty=_y; _x=x; _y=y; }
+void Battleship::moveRight()   { if (_x < (128-BATTESHIP_WIDTH)-2)  { _x ++; } }
+void Battleship::moveLeft()    { if (_x > 0)                        { _x --; } }
+void Battleship::moveUp()      { if (_y > 2)                        { _y --; } }
+void Battleship::moveDown()    { if (_y < (64-BATTESHIP_HEIGHT))    { _y ++; } }
+void Battleship::setPosition(int x, int y) { _x=x; _y=y; }
 void Battleship::Fire()
 {
+  Serial.print("fire_count: ");
+  Serial.println(fire_count, DEC);
+
   if (fire_count < MAX_FIRES)
   {
     if (millis()-last_fire > BATTESHIP_FIRE_DELAY)
     {
      for (int i=0 ; i<MAX_FIRES; i++)
      {
+        Serial.print(fires[i].x); Serial.print("-");
        if (fires[i].x == 0)
        {
          fires[i].x = _x + BATTESHIP_WIDTH;
@@ -206,7 +208,6 @@ void Battleship::update()
   int i,j;
   
   // Update position
-  display.drawBitmap(_lastx, _lasty,  ship, BATTESHIP_WIDTH, BATTESHIP_HEIGHT, 0);
   display.drawBitmap(_x, _y,  ship, BATTESHIP_WIDTH, BATTESHIP_HEIGHT, 1);
 
   // Update fire
@@ -215,14 +216,12 @@ void Battleship::update()
     //BATTESHIP_FIRE_WIDTH     
     if (fires[i].x > 0)
     { 
-      for (j=0 ; j<BATTESHIP_FIRE_WIDTH ; j++) { display.drawPixel(fires[i].x-j, fires[i].y, BLACK); } // Draw 3 pixels back for the full shot            
       fires[i].x += BATTESHIP_FIRE_SPEED;
       for (j=0 ; j<BATTESHIP_FIRE_WIDTH ; j++) { display.drawPixel(fires[i].x-j, fires[i].y, WHITE); } // Draw 3 pixels back for the full shot      
       
       //Shot is dead
       if (fires[i].x > (128-BATTESHIP_FIRE_WIDTH))
-      {
-        for (j=0 ; j<BATTESHIP_FIRE_WIDTH ; j++) { display.drawPixel(fires[i].x-j, fires[i].y, BLACK); } // Erase shot
+      {        
         fires[i].x=0; 
         fire_count--;
       }
@@ -283,8 +282,6 @@ Enemy::Enemy()
     islive=false;
     isdead=false;
     _type=0;
-    _lastx=0;
-    _lasty=0;
     _x=0;
     _y=0;
     position.x=0;
@@ -303,8 +300,6 @@ void Enemy::create()
       _type= random(1, 5);    
       position.x = 100;
       position.y = random(10, 50);
-      _lastx=_x;
-      _lasty=_y;
       
       last_millis = millis();
       fire_delay_ms = random(200,2500);
@@ -361,17 +356,13 @@ void Enemy::update()
      } break;
   }
   
-  display.drawBitmap(_lastx, _lasty,  sprite, 5, 5, 0); // Erase
-  
   display.drawBitmap(_x, _y,  sprite, 5, 5, 1); // Draw
-  _lastx = _x;
-  _lasty = _y;  
   
 }
 
 void Enemy::destroy()
 {
-   display.drawBitmap(_lastx, _lasty,  sprite, 5, 5, 0); // Erase
+   //display.drawBitmap(_lastx, _lasty,  sprite, 5, 5, 0); // Erase
    islive=false; 
    total_enemies--;
 }
