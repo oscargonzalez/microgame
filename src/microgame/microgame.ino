@@ -592,9 +592,7 @@ void loop() {
     display.drawBitmap(20, 30,  enemy_explode2, 5, 5, 1);     
     display.drawBitmap(20, 40,  enemy_explode3, 5, 5, 1);     
     display.drawBitmap(20, 50,  enemy_explode4, 5, 5, 1);     
-    display.drawBitmap(20, 59,  enemy_explode5, 5, 5, 1);   
-  
-    printNumbers(20, 20, "1234");
+    display.drawBitmap(20, 59,  enemy_explode5, 5, 5, 1);       
     
      
     // Draw framebuffer
