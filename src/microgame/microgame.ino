@@ -549,6 +549,7 @@ class Scores {
   public:
     Scores();
     void draw();    
+    void gameover();
 
     // Read/write scores as INTEGER (Thanks to http://forum.arduino.cc/index.php/topic,37470.0.html)
     void saveScore(int p_value);
@@ -618,6 +619,22 @@ void Scores::draw()
     }    
 
     display.drawLine(0, 8, 128, 8, WHITE);    
+}
+
+// End of game animation (also save score if higher than previous!)
+void Scores::gameover()
+{
+  if (current_score > high_score)
+  {
+    saveScore(current_score);
+  }
+
+  tone(3, 3000, 800);
+  tone(3, 2000, 800);
+  tone(3, 1000, 2500);
+
+
+
 }
 
 // Main games object clases
@@ -747,6 +764,11 @@ void loop() {
   }
 
   score.draw();     
+
+  if (max_lives == -1)
+  {
+    score.gameover();
+  }
       
   // Draw framebuffer
   display.display();    
