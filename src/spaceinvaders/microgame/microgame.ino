@@ -5,18 +5,26 @@
 #include <EEPROM.h>
 
 // Uncomment this block to use hardware SPI
+/*
 #define OLED_DC     6
 #define OLED_CS     7
 #define OLED_RESET  8
 Adafruit_SSD1306 display(OLED_DC, OLED_RESET, OLED_CS);
+*/
+#define OLED_MOSI   9
+#define OLED_CLK   10
+#define OLED_DC    11
+#define OLED_CS    12
+#define OLED_RESET 13
+Adafruit_SSD1306 display(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 
 //Define buttons
-#define BUTTON_UP     A0
-#define BUTTON_DOWN   A1
-#define BUTTON_LEFT   2
-#define BUTTON_RIGHT  A3
-#define BUTTON_A      4
-#define BUTTON_B      5
+#define BUTTON_UP     1
+#define BUTTON_DOWN   2
+#define BUTTON_LEFT   4
+#define BUTTON_RIGHT  5
+#define BUTTON_A      6
+#define BUTTON_B      7
 
 #define MAX_STARS          10 // Starfield config. The more, the poor...
 #define SCOREBOARD_HEIGHT  8
