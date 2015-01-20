@@ -620,13 +620,17 @@ void Scores::draw()
     display.setCursor(0,0);
     display.print("SCORE: ");     
     display.print(current_score);       
-
-    for (int i=0 ; i<max_lives ; i++)
+    
+    if (current_score > high_score)
     {
-        display.drawBitmap(118-((i*(BATTESHIP_WIDTH+3))), 0,  ship, BATTESHIP_WIDTH, BATTESHIP_HEIGHT, 1);
+      saveScore(current_score);
     }    
-
-    display.drawLine(0, 8, 128, 8, WHITE);    
+    
+  display.setTextSize(1);
+  display.setTextColor(WHITE);  
+  display.setCursor(118,0);
+  display.print(max_lives);           
+  display.drawLine(0, 8, 128, 8, WHITE);    
 }
 
 // End of game animation (also save score if higher than previous!)
@@ -636,6 +640,17 @@ void Scores::gameover()
   {
     saveScore(current_score);
   }
+  
+  // Set default text size
+  display.setTextSize(2);
+  display.setTextColor(WHITE);  
+  display.setCursor(10,27);
+  display.print("GAME OVER");     
+  
+  display.display(); 
+  
+  //display.print(score.high_score);         
+  while(1);
 
   tone(3, 3000, 800);
   tone(3, 2000, 800);
@@ -707,9 +722,8 @@ void setup()   {
   tone(3, 1500, 300);
   tone(3, 2000, 600);
 
-  delay(2000);
-    
-/*  
+  delay(2000);    
+  
   // Splash logo!
   display.clearDisplay();
   display.drawBitmap(0, 0,  splash_logo, 128, 64, 1);
@@ -726,9 +740,9 @@ void setup()   {
   delay(2000);
   
   display.startscrollleft(0x00, 0x0F);
-  delay(5000);
+  while (!controls.getButton(BUTTON_A)) { }
   display.stopscroll();  
-*/
+
   display.clearDisplay();
   
 
@@ -772,7 +786,8 @@ void loop() {
   }
 
   score.draw();     
-
+ 
+     Serial.println(max_lives);
   if (max_lives == -1)
   {
     score.gameover();
@@ -780,7 +795,7 @@ void loop() {
       
   // Draw framebuffer
   display.display();    
-   
+     
   //FPS counter 
   if (millis()-last_time > 1000)
   {
