@@ -1,16 +1,35 @@
+/**************************************************************************************************************
+
+  MicroGame v1.0
+  Hardware and Sofware by Oscar Gonzalez
+  http:/www.bricogeek.com
+  August 2014 - January 2015
+  
+  Project sources and schematics:
+  https://github.com/oscargonzalez/microgame
+  
+  The hardware is released under Creative Commons Share-alike 3.0
+  http://creativecommons.org/licenses/by-sa/3.0/
+  
+  All other code is open source so please feel free to do anything you want with it; you buy me a beer if you use this and we meet someday (Beerware license)
+  http://en.wikipedia.org/wiki/Beerware
+
+***************************************************************************************************************/
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <EEPROM.h>
 
-// Uncomment this block to use hardware SPI
+// Uncomment this block to use hardware SPI (MUCH faster but not supported in hardware yet, sorry!)
 /*
 #define OLED_DC     6
 #define OLED_CS     7
 #define OLED_RESET  8
 Adafruit_SSD1306 display(OLED_DC, OLED_RESET, OLED_CS);
 */
+
+// Software SPI (SLOWER!)
 #define OLED_MOSI   9
 #define OLED_CLK   10
 #define OLED_DC    11
@@ -139,10 +158,10 @@ Battleship::Battleship()
    for (i=0;i<MAX_FIRES;i++) { fires[i].x=0; }
 }
 
-void Battleship::moveRight()   { if (_x < (128-BATTESHIP_WIDTH)-2)  { _x ++; } }
-void Battleship::moveLeft()    { if (_x > 0)                        { _x --; } }
-void Battleship::moveUp()      { if (_y > 8)                        { _y --; } }
-void Battleship::moveDown()    { if (_y < (64-BATTESHIP_HEIGHT))    { _y ++; } }
+void Battleship::moveRight()   { if (_x < (128-BATTESHIP_WIDTH)-2)  { _x +=2; } }
+void Battleship::moveLeft()    { if (_x > 0)                        { _x -=2; } }
+void Battleship::moveUp()      { if (_y > 8)                        { _y -=2; } }
+void Battleship::moveDown()    { if (_y < (64-BATTESHIP_HEIGHT))    { _y +=2; } }
 void Battleship::setPosition(int x, int y) { _x=x; _y=y; }
 void Battleship::Fire()
 {  
@@ -310,7 +329,7 @@ void Enemy::update()
          sprite=enemy1; 
          animx = (0.001*(millis()-last_millis));
          animy = (0.003*(millis()-last_millis));
-         _x = position.x+sin(animx)*20;
+         _x = (position.x+sin(animx)*20);
          _y = position.y+cos(animx)*16;       
        } break;
        case 2: {
@@ -624,6 +643,7 @@ void Scores::draw()
     if (current_score > high_score)
     {
       saveScore(current_score);
+      high_score = current_score;
     }    
     
   display.setTextSize(1);
@@ -655,8 +675,6 @@ void Scores::gameover()
   tone(3, 3000, 800);
   tone(3, 2000, 800);
   tone(3, 1000, 2500);
-
-
 
 }
 
